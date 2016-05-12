@@ -42,6 +42,7 @@ class compass_class:
 compass = compass_class()
 
 def get_action(view):
+    return 'f' # placeholder
     # view is a 5 x 5 array
     if not env: # just spawned
         # for x in range(5):
@@ -109,7 +110,7 @@ if len(sys.argv) < 3:
 # open socket to Game Engine
 sd = socket.create_connection(('localhost', sys.argv[2]))
 in_stream = sd.makefile('r')
-# out_stream = sd.makefile('w')
+out_stream = sd.makefile('w')
 
 while True:
     # scan 5-by-5 window around curr loc
@@ -122,5 +123,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    # action = get_action(view)
-    # out_stream.write(action)
+    action = get_action(view)
+    print action
+    out_stream.write(action)
+    out_stream.flush()
