@@ -33,8 +33,6 @@ has_key = False
 curr_x = 0
 curr_y = 0
 
-last_move = ''
-
 class compass_class:
     def __init__(self):
         self.directions = ['n', 'e', 's', 'w']
@@ -84,6 +82,9 @@ class env_class:
         self.border_s = 0
         self.border_w = 0
 
+        self.compass = compass_class()
+        self.last_move = ''
+
         # poi locations relative to start (as tuples)
         axe = False
         key = False
@@ -99,24 +100,25 @@ class env_class:
             self.border_e =  2
             self.border_s = -2
             self.border_w = -2
-        # else:
-        #     # add new stuff to env if moved; note, must account for direction as view rotates with agent
-        #     if last_move == 'f':
-        #         new = []
-        #         direction = compass.curr()
-        #         if direction == 'n':
-        #             # top row is new
-        #             for x in range(5):
-        #                 env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
-        #         elif direction == 'e':
-        #             # right col is new
-        #             pass
-        #         elif direction == 's':
-        #             # bottom row is new
-        #             pass
-        #         elif direction == 'w':
-        #             # left col is new
-        #             pass
+        else:
+            # add new stuff to env if moved; note, must account for direction as view rotates with agent
+            if self.last_move == 'f':
+                new = []
+                direction = self.compass.curr()
+                if direction == 'n':
+                    # top row is new
+                    for x in range(5):
+                        env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
+                elif direction == 'e':
+                    # right col is new
+                    pass
+                elif direction == 's':
+                    # bottom row is new
+                    for x in range(5):
+                        env[(curr_x - 2 + x, curr_y - 2)] = view[x,0]
+                elif direction == 'w':
+                    # left col is new
+                    pass
 
     def show(self):
         for y in range(border_n, border_s - 1, -1):
