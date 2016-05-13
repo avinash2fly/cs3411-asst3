@@ -62,32 +62,7 @@ class compass_class:
         return self.directions[self.i]
 compass = compass_class()
 
-def get_action(view):
-    # maybe move this updating env stuff into its own function
-    if not env: # just spawned
-        env = view
-        border_n =  2
-        border_e =  2
-        border_s = -2
-        border_w = -2
-    else:
-        # add new stuff to env if moved; note, must account for direction as view rotates with agent
-        if last_move == 'f':
-            new = []
-            direction = compass.curr()
-            if direction == 'n':
-                # top row is new
-                for x in range(5):
-                    env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
-            elif direction == 'e':
-                # right col is new
-                pass
-            elif direction == 's':
-                # bottom row is new
-                pass
-            elif direction == 'w':
-                # left col is new
-                pass
+def get_action(env):
     action = 'f' # placeholder
     return action # action must be a single char string
 
@@ -111,6 +86,35 @@ def get_action(view):
     # search for path to appropriate pois
     # if no path, try next poi
     # maybe store previously planned path and just continue if same poi is highest priority still
+
+# maybe stick env stuff in its own module?
+
+def update_env(env, view): # turn this into a method
+    if not env: # just spawned
+        env = view
+        border_n =  2 # probs should be attributes
+        border_e =  2
+        border_s = -2
+        border_w = -2
+    else:
+        # add new stuff to env if moved; note, must account for direction as view rotates with agent
+        if last_move == 'f':
+            new = []
+            direction = compass.curr()
+            if direction == 'n':
+                # top row is new
+                for x in range(5):
+                    env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
+            elif direction == 'e':
+                # right col is new
+                pass
+            elif direction == 's':
+                # bottom row is new
+                pass
+            elif direction == 'w':
+                # left col is new
+                pass
+    return env
 
 def print_env(env):
     for y in range(border_n, border_s - 1, -1):
@@ -159,9 +163,10 @@ while True:
                 if ch == -1:
                     exit()
                 view[(x, y)] = ch
+    env = update_env(env, view)
     print_view(view)
     print_env(env)
-    action = get_action(view)
+    action = get_action(env)
     print action
     out_stream.write(action)
     out_stream.flush()
