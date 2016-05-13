@@ -41,13 +41,6 @@ gold = False
 # but are these unique (besides gold)?
 # use lists of tuples for each if not?
 
-# env borders (mainly for print_env)
-border_n = 0
-border_e = 0
-border_s = 0
-border_w = 0
-
-env = {} # dict mapping relative co-ordinates to tile types
 last_move = ''
 
 class compass_class:
@@ -88,48 +81,55 @@ def get_action(env):
     # maybe store previously planned path and just continue if same poi is highest priority still
 
 # maybe stick env stuff in its own module?
+class env_class:
+    """Representation of known game environment"""
+    def __init__(self, arg):
+        self.rep = {} # dict mapping relative co-ordinates to tile types
+        self.border_n = 0
+        self.border_e = 0
+        self.border_s = 0
+        self.border_w = 0
 
-def update_env(env, view): # turn this into a method
-    if not env: # just spawned
-        env = view
-        border_n =  2 # probs should be attributes
-        border_e =  2
-        border_s = -2
-        border_w = -2
-    else:
-        # add new stuff to env if moved; note, must account for direction as view rotates with agent
-        if last_move == 'f':
-            new = []
-            direction = compass.curr()
-            if direction == 'n':
-                # top row is new
-                for x in range(5):
-                    env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
-            elif direction == 'e':
-                # right col is new
-                pass
-            elif direction == 's':
-                # bottom row is new
-                pass
-            elif direction == 'w':
-                # left col is new
-                pass
-    return env
+    def update(self, view):
+        if not self.rep: # just spawned
+            self.rep = view
+            self.border_n =  2 # probs should be attributes
+            self.border_e =  2
+            self.border_s = -2
+            self.border_w = -2
+        # else:
+        #     # add new stuff to env if moved; note, must account for direction as view rotates with agent
+        #     if last_move == 'f':
+        #         new = []
+        #         direction = compass.curr()
+        #         if direction == 'n':
+        #             # top row is new
+        #             for x in range(5):
+        #                 env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
+        #         elif direction == 'e':
+        #             # right col is new
+        #             pass
+        #         elif direction == 's':
+        #             # bottom row is new
+        #             pass
+        #         elif direction == 'w':
+        #             # left col is new
+        #             pass
 
-def print_env(env):
-    for y in range(border_n, border_s - 1, -1):
-        line = ''
-        for x in range(border_w, border_e + 1):
-            if not (x == 0 and y == 0): # skip agent location
-                if (x,y) in env:
-                    line += env[(x, y)]
+    def show(self):
+        for y in range(border_n, border_s - 1, -1):
+            line = ''
+            for x in range(border_w, border_e + 1):
+                if not (x == 0 and y == 0): # skip agent location
+                    if (x,y) in self.rep:
+                        line += self.rep[(x, y)]
+                    else:
+                        line += '?' # unmapped
+                    # line += self.rep[(x,y)] if (x,y) in self.rep else '?' # ternary alt
                 else:
-                    line += '?' # unmapped
-                # line += env[(x,y)] if (x,y) in env else '?' # ternary alt
-            else:
-                line += 'A' # TODO: agent direction
-        print(line)
-
+                    line += 'A' # TODO: agent direction
+            print(line)
+env = env_class()
 
 def print_view(view):
     print("+-----+")
@@ -163,9 +163,9 @@ while True:
                 if ch == -1:
                     exit()
                 view[(x, y)] = ch
-    env = update_env(env, view)
     print_view(view)
-    print_env(env)
+    env.update(view)
+    env.show()
     action = get_action(env)
     print action
     out_stream.write(action)
