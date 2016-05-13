@@ -107,18 +107,20 @@ class env_class:
                 direction = self.compass.curr()
                 if direction == 'n':
                     # top row is new
-                    for x in range(5):
-                        env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
+                    for x in range(-2, 3):
+                        env[(curr_x + x, curr_y + 2)] = view[(x,2)]
                 elif direction == 'e':
                     # right col is new
-                    pass
+                    for y in range(-2, 3):
+                        env[(curr_x + 2, curr_y + y)] = view[(2,y)]
                 elif direction == 's':
                     # bottom row is new
-                    for x in range(5):
-                        env[(curr_x - 2 + x, curr_y - 2)] = view[x,0]
+                    for x in range(-2, 3):
+                        env[(curr_x + x, curr_y - 2)] = view[(x,-2)]
                 elif direction == 'w':
                     # left col is new
-                    pass
+                    for y in range(-2, 3):
+                        env[(curr_x - 2, curr_y + y)] = view[(-2,y)]
 
     def show(self):
         for y in range(border_n, border_s - 1, -1):
