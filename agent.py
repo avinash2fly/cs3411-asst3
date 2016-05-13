@@ -41,9 +41,14 @@ gold = False
 # but are these unique (besides gold)?
 # use lists of tuples for each if not?
 
+# env borders (mainly for print_env)
+border_n = 0
+border_e = 0
+border_s = 0
+border_w = 0
+
 env = {} # dict mapping relative co-ordinates to tile types
 last_move = ''
-direction = 'n'
 
 class compass_class:
     def __init__(self):
@@ -58,21 +63,22 @@ class compass_class:
 compass = compass_class()
 
 def get_action(view):
-    return 'f' # placeholder
-    # view is a 5 x 5 array
+    # maybe move this updating env stuff into its own function
     if not env: # just spawned
-        # for x in range(5):
-        #     for y in range(5):
-        #         env[(x-2, y+2)] = view[x][y]
         env = view
+        border_n =  2
+        border_e =  2
+        border_s = -2
+        border_w = -2
     else:
         # add new stuff to env if moved; note, must account for direction as view rotates with agent
         if last_move == 'f':
             new = []
+            direction = compass.curr()
             if direction == 'n':
                 # top row is new
                 for x in range(5):
-                    env[(curr_x)] = view[x,0]
+                    env[(curr_x - 2 + x, curr_y + 2)] = view[x,0]
             elif direction == 'e':
                 # right col is new
                 pass
@@ -82,8 +88,8 @@ def get_action(view):
             elif direction == 'w':
                 # left col is new
                 pass
-
-    # return action # action must be a single char string
+    action = 'f' # placeholder
+    return action # action must be a single char string
 
     # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
 
@@ -105,6 +111,21 @@ def get_action(view):
     # search for path to appropriate pois
     # if no path, try next poi
     # maybe store previously planned path and just continue if same poi is highest priority still
+
+def print_env(env):
+    for y in range(border_n, border_s - 1, -1):
+        line = ''
+        for x in range(border_w, border_e + 1):
+            if not (x == 0 and y == 0): # skip agent location
+                if (x,y) in env:
+                    line += env[(x, y)]
+                else:
+                    line += '?' # unmapped
+                # line += env[(x,y)] if (x,y) in env else '?' # ternary alt
+            else:
+                line += 'A' # TODO: agent direction
+        print(line)
+
 
 def print_view(view):
     print("+-----+")
@@ -139,6 +160,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
+    print_env(env)
     action = get_action(view)
     print action
     out_stream.write(action)
