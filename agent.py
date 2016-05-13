@@ -12,6 +12,22 @@ has_axe = False
 has_key = False
 
 # tile types?
+# 'T' tree
+# '.' off map
+# '-' door
+# '~' water
+# '*' wall
+# 'a' axe
+# 'k' key
+# 'o' stepping stone
+# 'g' gold
+
+# commands
+# L left
+# R right
+# F forward
+# C chop
+# U unlock
 
 # curr location relative to start
 curr_x = 0
