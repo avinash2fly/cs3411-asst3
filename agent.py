@@ -33,14 +33,6 @@ has_key = False
 curr_x = 0
 curr_y = 0
 
-# poi locations relative to start (as tuples)
-axe = False
-key = False
-stone = False
-gold = False
-# but are these unique (besides gold)?
-# use lists of tuples for each if not?
-
 last_move = ''
 
 class compass_class:
@@ -85,10 +77,20 @@ class env_class:
     """Representation of known game environment"""
     def __init__(self, arg):
         self.rep = {} # dict mapping relative co-ordinates to tile types
+
+        # env borders (mainly for show())
         self.border_n = 0
         self.border_e = 0
         self.border_s = 0
         self.border_w = 0
+
+        # poi locations relative to start (as tuples)
+        axe = False
+        key = False
+        stone = False
+        gold = False
+        # but are these unique (besides gold)?
+        # use lists of tuples for each if not?
 
     def update(self, view):
         if not self.rep: # just spawned
