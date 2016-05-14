@@ -104,6 +104,16 @@ class env_class:
             self.border_e =  2
             self.border_s = -2
             self.border_w = -2
+            for y in range(2, -3, -1):
+                for x in range(-2, 3):
+                    if self.rep[(x,y)] == 'a':
+                        self.axe.append((x,y))
+                    elif self.rep[(x,y)] == 'k':
+                        self.key.append((x,y))
+                    elif self.rep[(x,y)] == 'o':
+                        self.stone.append((x,y))
+                    elif self.rep[(x,y)] == 'g':
+                        self.gold = (x,y)
         elif action == 'f':
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
             # need to deal with increasing borders
