@@ -97,7 +97,7 @@ class env_class:
         self.y = 0
 
     def update(self, view, action):
-        # curr_x, curr_y = loc
+        direction = self.compass.curr()
         if not self.rep: # just spawned
             self.rep = view
             self.border_n =  2
@@ -107,7 +107,6 @@ class env_class:
         elif action == 'f':
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
             # need to deal with increasing borders
-            direction = self.compass.curr()
             if direction == 'n':
                 self.y += 1
                 # top row is new
@@ -144,8 +143,16 @@ class env_class:
             self.compass.left()
         elif action == 'r':
             self.compass.right()
-        # elif action == 'c': # if cutting, update right in front since tree gone
-        # etc.
+        elif action == 'c' or action == 'u':
+            # update right in front since tree or door gone
+            if direction == 'n':
+                self.rep[(self.x, self.y + 1)] = view[(0,1)]
+            elif direction == 'e':
+                self.rep[(self.x + 1, self.y)] = view[(0,1)]
+            elif direction == 's':
+                self.rep[(self.x, self.y - 1)] = view[(0,1)]
+            elif direction == 'w':
+                self.rep[(self.x - 1, self.y)] = view[(0,1)]
 
     def show(self):
         print(self.border_n)
