@@ -87,9 +87,9 @@ class env_class:
         self.compass = compass_class()
 
         # poi locations relative to start (as tuples)
-        self.axe = []
-        self.key = []
-        self.stone = []
+        self.axe = set()
+        self.key = set()
+        self.stone = set()
         self.gold = False
 
         # agent loc
@@ -98,18 +98,20 @@ class env_class:
 
     def check(self, pos):
         if self.rep[pos] == 'a':
-            self.axe.append(pos)
+            self.axe.add(pos)
         elif self.rep[pos] == 'k':
-            self.key.append(pos)
+            self.key.add(pos)
         elif self.rep[pos] == 'o':
-            self.stone.append(pos)
+            self.stone.add(pos)
         elif self.rep[pos] == 'g':
             self.gold = pos
+        # should also store doors and trees?
 
     def update(self, view, action):
         direction = self.compass.curr()
         if not self.rep: # just spawned
             self.rep = view
+            self.rep[(0,0)] = ' '
             self.border_n =  2
             self.border_e =  2
             self.border_s = -2
