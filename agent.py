@@ -107,6 +107,15 @@ class env_class:
             self.gold = pos
         # should also store doors and trees?
 
+    def on_poi(self):
+        pos = (self.x, self.y)
+        if self.rep[pos] == 'a':
+            self.axe.remove(pos)
+        elif self.rep[pos] == 'k':
+            self.key.remove(pos)
+        elif self.rep[pos] == 'o':
+            self.stone.remove(pos)
+
     def update(self, view, action):
         direction = self.compass.curr()
         if not self.rep: # just spawned
@@ -158,6 +167,7 @@ class env_class:
                 # update tile you just stepped off
                 self.rep[(self.x + 1, self.y)] = view[(0,-1)]
                 self.border_w = min(self.x - 2, self.border_w)
+            self.on_poi()
         elif action == 'l':
             self.compass.left()
         elif action == 'r':
