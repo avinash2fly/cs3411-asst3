@@ -20,6 +20,7 @@ has_key = False
 # 'a' axe
 # 'k' key
 # 'o' stepping stone
+# 'O' placed stone
 # 'g' gold
 
 # commands
