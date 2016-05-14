@@ -139,6 +139,10 @@ class env_class:
                 # update tile you just stepped off
                 self.rep[(self.x + 1, self.y)] = view[(0,-1)]
                 self.border_w = min(self.x - 2, self.border_w)
+        elif action == 'l':
+            self.compass.left()
+        elif action == 'r':
+            self.compass.right()
         # elif action == 'c': # if cutting, update right in front since tree gone
         # etc.
 
@@ -210,6 +214,5 @@ while True:
     env.update(view, action)
     env.show()
     action = get_action(env)
-    print action
     out_stream.write(action)
     out_stream.flush()
