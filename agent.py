@@ -96,6 +96,16 @@ class env_class:
         self.x = 0
         self.y = 0
 
+    def check(self, pos):
+        if self.rep[pos] == 'a':
+            self.axe.append(pos)
+        elif self.rep[pos] == 'k':
+            self.key.append(pos)
+        elif self.rep[pos] == 'o':
+            self.stone.append(pos)
+        elif self.rep[pos] == 'g':
+            self.gold = pos
+
     def update(self, view, action):
         direction = self.compass.curr()
         if not self.rep: # just spawned
@@ -106,14 +116,7 @@ class env_class:
             self.border_w = -2
             for y in range(2, -3, -1):
                 for x in range(-2, 3):
-                    if self.rep[(x,y)] == 'a':
-                        self.axe.append((x,y))
-                    elif self.rep[(x,y)] == 'k':
-                        self.key.append((x,y))
-                    elif self.rep[(x,y)] == 'o':
-                        self.stone.append((x,y))
-                    elif self.rep[(x,y)] == 'g':
-                        self.gold = (x,y)
+                    self.check((x,y))
         elif action == 'f':
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
             # need to deal with increasing borders
