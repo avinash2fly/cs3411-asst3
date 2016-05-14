@@ -46,7 +46,8 @@ class compass_class:
 compass = compass_class()
 
 def get_action(env):
-    action = 'f' # placeholder
+    # action = 'f' # placeholder
+    action = raw_input('Action: ')
     return action # action must be a single char string
 
     # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
