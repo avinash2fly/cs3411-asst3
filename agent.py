@@ -117,8 +117,8 @@ class env_class:
             elif direction == 'e':
                 self.x += 1
                 # right col is new
-                for y in range(-2, 3):
-                    self.rep[(self.x + 2, self.y + y)] = view[(2,y)]
+                for x in range(-2, 3):
+                    self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
                 # update tile you just stepped off
                 self.rep[(self.x - 1, self.y)] = view[(0,-1)]
                 self.border_e = max(self.x + 2, self.border_e)
@@ -126,15 +126,15 @@ class env_class:
                 self.y -= 1
                 # bottom row is new
                 for x in range(-2, 3):
-                    self.rep[(self.x + x, self.y - 2)] = view[(x,-2)]
+                    self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
                 # update tile you just stepped off
                 self.rep[(self.x, self.y + 1)] = view[(0,-1)]
                 self.border_s = min(self.y - 2, self.border_s)
             elif direction == 'w':
                 self.x -= 1
                 # left col is new
-                for y in range(-2, 3):
-                    self.rep[(self.x - 2, self.y + y)] = view[(-2,y)]
+                for x in range(-2, 3):
+                    self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
                 # update tile you just stepped off
                 self.rep[(self.x + 1, self.y)] = view[(0,-1)]
                 self.border_w = min(self.x - 2, self.border_w)
