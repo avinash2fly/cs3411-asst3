@@ -99,6 +99,7 @@ class env_class:
             self.border_w = -2
         else:
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
+            # need to deal with increasing borders
             direction = self.compass.curr()
             if direction == 'n':
                 # top row is new
@@ -118,8 +119,13 @@ class env_class:
                     self.rep[(curr_x - 2, curr_y + y)] = view[(-2,y)]
 
     def show(self):
+        line = '+'
+        for x in range(self.border_w, self.border_e + 1):
+            line += '-'
+        line += '+'
+        print(line)
         for y in range(self.border_n, self.border_s - 1, -1):
-            line = ''
+            line = '|'
             for x in range(self.border_w, self.border_e + 1):
                 if not (x == 0 and y == 0): # skip agent location
                     if (x,y) in self.rep:
@@ -129,7 +135,13 @@ class env_class:
                     # line += self.rep[(x,y)] if (x,y) in self.rep else '?' # ternary alt
                 else:
                     line += 'A' # TODO: agent direction
+            line += '|'
             print(line)
+        line = '+'
+        for x in range(self.border_w, self.border_e + 1):
+            line += '-'
+        line += '+'
+        print(line)
 env = env_class()
 
 def print_view(view):
@@ -167,7 +179,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    if action = 'f': # prior action
+    if action == 'f': # prior action
         env.update(view)
     env.show()
     action = get_action(env)
