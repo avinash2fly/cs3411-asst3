@@ -105,20 +105,28 @@ class env_class:
                 # top row is new
                 for x in range(-2, 3):
                     self.rep[(curr_x + x, curr_y + 2)] = view[(x,2)]
+                self.border_n = max(curr_y + 2, self.border_n)
             elif direction == 'e':
                 # right col is new
                 for y in range(-2, 3):
                     self.rep[(curr_x + 2, curr_y + y)] = view[(2,y)]
+                self.border_e = max(curr_x + 2, self.border_e)
             elif direction == 's':
                 # bottom row is new
                 for x in range(-2, 3):
                     self.rep[(curr_x + x, curr_y - 2)] = view[(x,-2)]
+                self.border_s = min(curr_y - 2, self.border_s)
             elif direction == 'w':
                 # left col is new
                 for y in range(-2, 3):
                     self.rep[(curr_x - 2, curr_y + y)] = view[(-2,y)]
+                self.border_w = min(curr_x - 2, self.border_w)
 
     def show(self):
+        print(self.border_n)
+        print(self.border_e)
+        print(self.border_s)
+        print(self.border_w)
         line = '+'
         for x in range(self.border_w, self.border_e + 1):
             line += '-'
@@ -179,7 +187,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    if action == 'f': # prior action
+    if action == 'f' or not action: # prior action
         env.update(view)
     env.show()
     action = get_action(env)
