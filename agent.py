@@ -112,10 +112,6 @@ class env_class:
             self.stone.add(pos)
         elif self.rep[pos] == 'g':
             self.gold = pos
-        elif self.rep[pos] == '~':
-            # place stone
-            self.rep[pos] = 'O'
-            self.num_stones -= 1
         # should also store doors and trees?
 
     def on_poi(self):
@@ -132,6 +128,12 @@ class env_class:
         elif self.rep[pos] == 'g':
             self.gold = False
             self.has_gold = True
+        elif self.rep[pos] == '~':
+            # place stone
+            self.rep[pos] = 'O'
+            self.num_stones -= 1
+            # if self.num_stones < 0:
+            #     ded
 
     def update(self, view, action):
         direction = self.compass.curr()
