@@ -95,35 +95,34 @@ class env_class:
     def update(self, view):
         if not self.rep: # just spawned
             self.rep = view
-            self.border_n =  2 # probs should be attributes
+            self.border_n =  2
             self.border_e =  2
             self.border_s = -2
             self.border_w = -2
         else:
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
-            new = []
             direction = self.compass.curr()
             if direction == 'n':
                 # top row is new
                 for x in range(-2, 3):
-                    env[(curr_x + x, curr_y + 2)] = view[(x,2)]
+                    self.rep[(curr_x + x, curr_y + 2)] = view[(x,2)]
             elif direction == 'e':
                 # right col is new
                 for y in range(-2, 3):
-                    env[(curr_x + 2, curr_y + y)] = view[(2,y)]
+                    self.rep[(curr_x + 2, curr_y + y)] = view[(2,y)]
             elif direction == 's':
                 # bottom row is new
                 for x in range(-2, 3):
-                    env[(curr_x + x, curr_y - 2)] = view[(x,-2)]
+                    self.rep[(curr_x + x, curr_y - 2)] = view[(x,-2)]
             elif direction == 'w':
                 # left col is new
                 for y in range(-2, 3):
-                    env[(curr_x - 2, curr_y + y)] = view[(-2,y)]
+                    self.rep[(curr_x - 2, curr_y + y)] = view[(-2,y)]
 
     def show(self):
-        for y in range(border_n, border_s - 1, -1):
+        for y in range(self.border_n, self.border_s - 1, -1):
             line = ''
-            for x in range(border_w, border_e + 1):
+            for x in range(self.border_w, self.border_e + 1):
                 if not (x == 0 and y == 0): # skip agent location
                     if (x,y) in self.rep:
                         line += self.rep[(x, y)]
