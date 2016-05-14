@@ -125,6 +125,7 @@ class env_class:
                 # top row is new
                 for x in range(-2, 3):
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
+                    self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
                 self.rep[(self.x, self.y - 1)] = view[(0,-1)]
                 self.border_n = max(self.y + 2, self.border_n)
@@ -133,6 +134,7 @@ class env_class:
                 # right col is new
                 for x in range(-2, 3):
                     self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
+                    self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
                 self.rep[(self.x - 1, self.y)] = view[(0,-1)]
                 self.border_e = max(self.x + 2, self.border_e)
@@ -141,6 +143,7 @@ class env_class:
                 # bottom row is new
                 for x in range(-2, 3):
                     self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
+                    self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
                 self.rep[(self.x, self.y + 1)] = view[(0,-1)]
                 self.border_s = min(self.y - 2, self.border_s)
@@ -149,6 +152,7 @@ class env_class:
                 # left col is new
                 for x in range(-2, 3):
                     self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
+                    self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
                 self.rep[(self.x + 1, self.y)] = view[(0,-1)]
                 self.border_w = min(self.x - 2, self.border_w)
