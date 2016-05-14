@@ -232,6 +232,10 @@ class env_class:
         print('key: ' + str(self.key))
         print('stone: ' + str(self.stone))
         print('gold: ' + str(self.gold))
+        print('has_axe: ' + str(self.has_axe))
+        print('has_key: ' + str(self.has_key))
+        print('num_stones: ' + str(self.num_stones))
+        print('has_gold: ' + str(self.has_gold))
 env = env_class()
 
 def print_view(view):
