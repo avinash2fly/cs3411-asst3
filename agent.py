@@ -112,6 +112,10 @@ class env_class:
             self.stone.add(pos)
         elif self.rep[pos] == 'g':
             self.gold = pos
+        elif self.rep[pos] == '~':
+            # place stone
+            self.rep[pos] = 'O'
+            self.num_stones -= 1
         # should also store doors and trees?
 
     def on_poi(self):
