@@ -105,10 +105,80 @@ class env_class:
 
     def pathfind(self, pos):
         # search towards pos from current xy
-        x, y = pos
-        path = [] # path of actions or path of positions?
+        targ_x, targ_y = pos
+        x = self.x
+        y = self.y
+        path = [] # path of actions or path of positions? probably positions
 
         return path
+
+    def astar(self, start, end, prev, num_stones): # since num_stones changes
+        a, b = start
+        c, d = end
+        best_mdist = None
+        best_pos = None
+
+        # should also discard where agent previously was
+        # need to decrement num_stones when necessary
+
+        # expand n
+        x = a
+        y = b + 1
+        # prune based on tile
+        if self.valid((x,y), num_stones):
+            # check manhattan distance
+            best_mdist = abs(x - c) + abs(y - d)
+            best_pos = (x,y)
+
+        # expand e
+        x = a + 1
+        y = b
+        if self.valid((x,y), num_stones):
+            mdist = abs(x - c) + abs(y - d)
+            if mdist > best_mdist:
+                best_mdist = mdist
+                best_pos = (x,y)
+
+        # expand s
+        x = a
+        y = b - 1
+        if self.valid((x,y), num_stones):
+            mdist = abs(x - c) + abs(y - d)
+            if mdist > best_mdist:
+                best_mdist = mdist
+                best_pos = (x,y)
+
+        # expand w
+        x = a - 1
+        y = b
+        if self.valid((x,y), num_stones):
+            mdist = abs(x - c) + abs(y - d)
+            if mdist > best_mdist:
+                best_mdist = mdist
+                best_pos = (x,y)
+
+        if not best_pos:
+            # no valid expansion
+            return False
+
+        prev += 1
+        return best_pos
+
+
+    def valid(self, pos, num_stones):
+        tile = self.rep[pos]
+        if tile == '*':
+            return False
+        elif tile == '.':
+            return False
+        elif tile == 'T' and self.axe == False:
+            return False
+        elif tile == '-' and self.key == False:
+            return False
+        elif tile == '~' and num_stones == 0:
+            return False
+        else:
+            return True
 
     def check(self, pos):
         if self.rep[pos] == 'a':
