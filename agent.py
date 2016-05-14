@@ -144,14 +144,14 @@ class env_class:
         for y in range(self.border_n, self.border_s - 1, -1):
             line = '|'
             for x in range(self.border_w, self.border_e + 1):
-                if not (x == 0 and y == 0): # skip agent location
-                    if (x,y) in self.rep:
-                        line += self.rep[(x, y)]
-                    else:
-                        line += '?' # unmapped
-                    # line += self.rep[(x,y)] if (x,y) in self.rep else '?' # ternary alt
+                if (x == self.x and y == self.y):
+                    line += 'A' # TODO: Agent direction
+                elif (x == 0 and y == 0):
+                    line += 'X' # Start/End
+                elif (x,y) in self.rep:
+                    line += self.rep[(x, y)]
                 else:
-                    line += 'A' # TODO: agent direction
+                    line += '?' # unmapped
             line += '|'
             print(line)
         line = '+'
