@@ -172,10 +172,10 @@ class env_class:
                 self.rep[(self.x - 1, self.y)] = view[(0,1)]
 
     def show(self):
-        print(self.border_n)
-        print(self.border_e)
-        print(self.border_s)
-        print(self.border_w)
+        # print(self.border_n)
+        # print(self.border_e)
+        # print(self.border_s)
+        # print(self.border_w)
         line = '+'
         for x in range(self.border_w, self.border_e + 1):
             line += '-'
@@ -199,6 +199,10 @@ class env_class:
             line += '-'
         line += '+'
         print(line)
+        print('axe: ' + str(self.axe))
+        print('key: ' + str(self.key))
+        print('stone: ' + str(self.stone))
+        print('gold: ' + str(self.gold))
 env = env_class()
 
 def print_view(view):
