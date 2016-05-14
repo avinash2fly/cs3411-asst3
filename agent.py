@@ -94,7 +94,7 @@ class env_class:
         self.x = 0
         self.y = 0
 
-    def update(self, view):
+    def update(self, view, action):
         # curr_x, curr_y = loc
         if not self.rep: # just spawned
             self.rep = view
@@ -102,7 +102,7 @@ class env_class:
             self.border_e =  2
             self.border_s = -2
             self.border_w = -2
-        else:
+        elif action == 'f':
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
             # need to deal with increasing borders
             direction = self.compass.curr()
@@ -111,25 +111,35 @@ class env_class:
                 # top row is new
                 for x in range(-2, 3):
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
+                # update tile you just stepped off
+                self.rep[(self.x, self.y - 1)] = view[(0,-1)]
                 self.border_n = max(self.y + 2, self.border_n)
             elif direction == 'e':
                 self.x += 1
                 # right col is new
                 for y in range(-2, 3):
                     self.rep[(self.x + 2, self.y + y)] = view[(2,y)]
+                # update tile you just stepped off
+                self.rep[(self.x - 1, self.y)] = view[(0,-1)]
                 self.border_e = max(self.x + 2, self.border_e)
             elif direction == 's':
                 self.y -= 1
                 # bottom row is new
                 for x in range(-2, 3):
                     self.rep[(self.x + x, self.y - 2)] = view[(x,-2)]
+                # update tile you just stepped off
+                self.rep[(self.x, self.y + 1)] = view[(0,-1)]
                 self.border_s = min(self.y - 2, self.border_s)
             elif direction == 'w':
                 self.x -= 1
                 # left col is new
                 for y in range(-2, 3):
                     self.rep[(self.x - 2, self.y + y)] = view[(-2,y)]
+                # update tile you just stepped off
+                self.rep[(self.x + 1, self.y)] = view[(0,-1)]
                 self.border_w = min(self.x - 2, self.border_w)
+        # elif action == 'c': # if cutting, update right in front since tree gone
+        # etc.
 
     def show(self):
         print(self.border_n)
@@ -196,8 +206,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    if action == 'f' or not action: # prior action
-        env.update(view)
+    env.update(view, action)
     env.show()
     action = get_action(env)
     print action
