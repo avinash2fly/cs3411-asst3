@@ -73,6 +73,7 @@ def get_action(env):
     # maybe store previously planned path and just continue if same poi is highest priority still
 
 # maybe stick env stuff in its own module?
+# this is really a rep of whole game now... maybe rename rep to env and env_class to game?
 class env_class:
     """Representation of known game environment"""
     def __init__(self):
@@ -91,6 +92,12 @@ class env_class:
         self.key = set()
         self.stone = set()
         self.gold = False
+
+        # need to store what agent has
+        self.has_axe = False
+        self.has_key = False
+        self.num_stones = 0
+        self.has_gold = False
 
         # agent loc
         self.x = 0
@@ -111,10 +118,16 @@ class env_class:
         pos = (self.x, self.y)
         if self.rep[pos] == 'a':
             self.axe.remove(pos)
+            self.has_axe = True
         elif self.rep[pos] == 'k':
             self.key.remove(pos)
+            self.has_key = True
         elif self.rep[pos] == 'o':
             self.stone.remove(pos)
+            self.num_stones += 1
+        elif self.rep[pos] == 'g':
+            self.gold = False
+            self.has_gold = True
 
     def update(self, view, action):
         direction = self.compass.curr()
