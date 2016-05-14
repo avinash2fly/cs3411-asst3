@@ -8,9 +8,6 @@
 
 import sys, os, socket
 
-has_axe = False
-has_key = False
-
 # tile types?
 # 'T' tree
 # '.' off map
@@ -29,10 +26,6 @@ has_key = False
 # F forward
 # C chop
 # U unlock
-
-# curr location relative to start
-curr_x = 0
-curr_y = 0
 
 class compass_class:
     def __init__(self):
