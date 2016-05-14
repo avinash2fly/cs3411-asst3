@@ -33,8 +33,6 @@ has_key = False
 curr_x = 0
 curr_y = 0
 
-last_move = ''
-
 class compass_class:
     def __init__(self):
         self.directions = ['n', 'e', 's', 'w']
@@ -156,6 +154,8 @@ sd = socket.create_connection(('localhost', sys.argv[2]))
 in_stream = sd.makefile('r')
 out_stream = sd.makefile('w')
 
+action = ''
+
 while True:
     # scan 5-by-5 window around curr loc
     view = {}
@@ -167,7 +167,7 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    if last_move = 'f':
+    if action = 'f': # prior action
         env.update(view)
     env.show()
     action = get_action(env)
