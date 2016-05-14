@@ -42,6 +42,13 @@ compass = compass_class()
 def get_action(env):
     # action = 'f' # placeholder
     action = raw_input('Action: ')
+
+    # if new highest priority thing:
+        path = env.pathfind(pos)
+
+    # else continue with prior path
+    action = path.pop(0)
+
     return action # action must be a single char string
 
     # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
@@ -95,6 +102,13 @@ class env_class:
         # agent loc
         self.x = 0
         self.y = 0
+
+    def pathfind(self, pos):
+        # search towards pos from current xy
+        x, y = pos
+        path = [] # path of actions or path of positions?
+
+        return path
 
     def check(self, pos):
         if self.rep[pos] == 'a':
