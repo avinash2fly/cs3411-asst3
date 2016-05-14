@@ -33,6 +33,8 @@ has_key = False
 curr_x = 0
 curr_y = 0
 
+last_move = ''
+
 class compass_class:
     def __init__(self):
         self.directions = ['n', 'e', 's', 'w']
@@ -73,7 +75,7 @@ def get_action(env):
 # maybe stick env stuff in its own module?
 class env_class:
     """Representation of known game environment"""
-    def __init__(self, arg):
+    def __init__(self):
         self.rep = {} # dict mapping relative co-ordinates to tile types
 
         # env borders (mainly for show())
@@ -83,15 +85,12 @@ class env_class:
         self.border_w = 0
 
         self.compass = compass_class()
-        self.last_move = ''
 
         # poi locations relative to start (as tuples)
-        axe = False
-        key = False
-        stone = False
-        gold = False
-        # but are these unique (besides gold)?
-        # use lists of tuples for each if not?
+        self.axe = []
+        self.key = []
+        self.stone = []
+        self.gold = False
 
     def update(self, view):
         if not self.rep: # just spawned
@@ -102,25 +101,24 @@ class env_class:
             self.border_w = -2
         else:
             # add new stuff to env if moved; note, must account for direction as view rotates with agent
-            if self.last_move == 'f':
-                new = []
-                direction = self.compass.curr()
-                if direction == 'n':
-                    # top row is new
-                    for x in range(-2, 3):
-                        env[(curr_x + x, curr_y + 2)] = view[(x,2)]
-                elif direction == 'e':
-                    # right col is new
-                    for y in range(-2, 3):
-                        env[(curr_x + 2, curr_y + y)] = view[(2,y)]
-                elif direction == 's':
-                    # bottom row is new
-                    for x in range(-2, 3):
-                        env[(curr_x + x, curr_y - 2)] = view[(x,-2)]
-                elif direction == 'w':
-                    # left col is new
-                    for y in range(-2, 3):
-                        env[(curr_x - 2, curr_y + y)] = view[(-2,y)]
+            new = []
+            direction = self.compass.curr()
+            if direction == 'n':
+                # top row is new
+                for x in range(-2, 3):
+                    env[(curr_x + x, curr_y + 2)] = view[(x,2)]
+            elif direction == 'e':
+                # right col is new
+                for y in range(-2, 3):
+                    env[(curr_x + 2, curr_y + y)] = view[(2,y)]
+            elif direction == 's':
+                # bottom row is new
+                for x in range(-2, 3):
+                    env[(curr_x + x, curr_y - 2)] = view[(x,-2)]
+            elif direction == 'w':
+                # left col is new
+                for y in range(-2, 3):
+                    env[(curr_x - 2, curr_y + y)] = view[(-2,y)]
 
     def show(self):
         for y in range(border_n, border_s - 1, -1):
@@ -170,7 +168,8 @@ while True:
                     exit()
                 view[(x, y)] = ch
     print_view(view)
-    env.update(view)
+    if last_move = 'f':
+        env.update(view)
     env.show()
     action = get_action(env)
     print action
