@@ -112,13 +112,13 @@ class env_class:
 
         return path
 
-    def astar(self, start, end, num_stones, cache): # since num_stones changes
+    def astar(self, start, end, num_stones): # since num_stones changes
         # prev is previous pos
-        # cache astar costs for each pos in a tuple dict
+        # cost cost to get to pos for each pos in a tuple dict
         a, b = start
         c, d = end
 
-        queue = []
+        queue = [start]
         # insert nodes into queue based on mdist + prev cost
 
         # should also discard where agent previously was
@@ -131,51 +131,56 @@ class env_class:
         # repeat
 
         # snippets which ill prolly needed
-        if (x,y) not in cache: # cache records estimated cost of shortest path through (x,y)
-            cache[(x,y)] = abs(x - c) + abs(y - d) + cache[(a,b)]
+        if (x,y) not in cost: # cost records estimated cost of shortest path through (x,y)
+            cost[(x,y)] = abs(x - c) + abs(y - d) + cost[(a,b)]
 
         # end snippets
 
-        # expand n
-        x = a
-        y = b + 1
-        # prune based on tile
-        if self.valid((x,y), num_stones): # this bit prolly can be a function
-            best_dist = abs(x - c) + abs(y - d) + cache[(x,y)]
-            best_pos = (x,y)
+        while len(queue) > 0:
 
-        # expand e
-        x = a + 1
-        y = b
-        if self.valid((x,y), num_stones):
-            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
-            if dist > best_dist:
-                best_dist = dist
-                best_pos = (x,y)
+            # pop queue
+            pos = queue.pop()
 
-        # expand s
-        x = a
-        y = b - 1
-        if self.valid((x,y), num_stones):
-            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
-            if dist > best_dist:
-                best_dist = dist
-                best_pos = (x,y)
+            if pos == end:
+                return path # how store path tho
 
-        # expand w
-        x = a - 1
-        y = b
-        if self.valid((x,y), num_stones):
-            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
-            if dist > best_dist:
-                best_dist = dist
-                best_pos = (x,y)
+            if pos in cost:
+                continue # actually is this right? need to be able to skip already expanded nodes, but not sure if this is the way
 
-        if not best_pos:
-            # no valid expansion
-            return False
+            # expand n
+            x = a
+            y = b + 1
+            if self.valid((x,y), num_stones): # this bit prolly can be a function
+                dist = abs(x - c) + abs(y - d) + cost[(x,y)] # manhattan distance + cost to get to (x,y) from (a,b)
+                # insert into priority queue
+                queue.insert((dist,(x,y)))
 
-        prev += 1
+            # expand e
+            x = a + 1
+            y = b
+            if self.valid((x,y), num_stones):
+                dist = abs(x - c) + abs(y - d) + cost[(x,y)]
+                # insert into priority queue
+                queue.insert((dist,(x,y)))
+
+            # expand s
+            x = a
+            y = b - 1
+            if self.valid((x,y), num_stones):
+                dist = abs(x - c) + abs(y - d) + cost[(x,y)]
+                # insert into priority queue
+                queue.insert((dist,(x,y)))
+
+            # expand w
+            x = a - 1
+            y = b
+            if self.valid((x,y), num_stones):
+                dist = abs(x - c) + abs(y - d) + cost[(x,y)]
+                # insert into priority queue
+                queue.insert((dist,(x,y)))
+
+            # how store path tho?
+
         return best_pos
 
 
