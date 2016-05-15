@@ -112,12 +112,12 @@ class env_class:
 
         return path
 
-    def astar(self, start, end, prev, num_stones): # since num_stones changes
+    def astar(self, start, end, prev, num_stones, cache): # since num_stones changes
         # prev is previous pos
         # cache astar costs for each pos in a tuple dict
         a, b = start
         c, d = end
-        best_mdist = None
+        best_dist = None
         best_pos = None
 
         queue = []
@@ -135,35 +135,34 @@ class env_class:
         y = b + 1
         # prune based on tile
         if self.valid((x,y), num_stones) and (x,y) != prev: # this bit prolly can be a function
-            # check manhattan distance
-            best_mdist = abs(x - c) + abs(y - d)
+            best_dist = abs(x - c) + abs(y - d) + cache[(x,y)]
             best_pos = (x,y)
 
         # expand e
         x = a + 1
         y = b
         if self.valid((x,y), num_stones) and (x,y) != prev:
-            mdist = abs(x - c) + abs(y - d)
-            if mdist > best_mdist:
-                best_mdist = mdist
+            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
+            if dist > best_dist:
+                best_dist = dist
                 best_pos = (x,y)
 
         # expand s
         x = a
         y = b - 1
         if self.valid((x,y), num_stones) and (x,y) != prev:
-            mdist = abs(x - c) + abs(y - d)
-            if mdist > best_mdist:
-                best_mdist = mdist
+            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
+            if dist > best_dist:
+                best_dist = dist
                 best_pos = (x,y)
 
         # expand w
         x = a - 1
         y = b
         if self.valid((x,y), num_stones) and (x,y) != prev:
-            mdist = abs(x - c) + abs(y - d)
-            if mdist > best_mdist:
-                best_mdist = mdist
+            dist = abs(x - c) + abs(y - d) + cache[(x,y)]
+            if dist > best_dist:
+                best_dist = dist
                 best_pos = (x,y)
 
         if not best_pos:
