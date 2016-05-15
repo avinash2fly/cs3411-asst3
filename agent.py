@@ -142,6 +142,8 @@ class env_class:
 
             # pop queue
             pos = queue.pop()
+            # if pos in seen: # maybe?
+            #      continue
             seen.add(pos)
 
             if pos == end:
