@@ -112,13 +112,11 @@ class env_class:
 
         return path
 
-    def astar(self, start, end, prev, num_stones, cache): # since num_stones changes
+    def astar(self, start, end, num_stones, cache): # since num_stones changes
         # prev is previous pos
         # cache astar costs for each pos in a tuple dict
         a, b = start
         c, d = end
-        best_dist = None
-        best_pos = None
 
         queue = []
         # insert nodes into queue based on mdist + prev cost
@@ -127,21 +125,29 @@ class env_class:
         # need to decrement num_stones when necessary
 
         # steps:
-        # expand nodes i.e. add the 3 positions to queue which are not the one you came from (skipping if already in queue)
-        # do again on highest priority item
+        # take first node from queue
+        # expand nodes from that node
+        # add them to queue based on cost
+        # repeat
+
+        # snippets which ill prolly needed
+        if (x,y) not in cache: # cache records estimated cost of shortest path through (x,y)
+            cache[(x,y)] = abs(x - c) + abs(y - d) + cache[(a,b)]
+
+        # end snippets
 
         # expand n
         x = a
         y = b + 1
         # prune based on tile
-        if self.valid((x,y), num_stones) and (x,y) != prev: # this bit prolly can be a function
+        if self.valid((x,y), num_stones): # this bit prolly can be a function
             best_dist = abs(x - c) + abs(y - d) + cache[(x,y)]
             best_pos = (x,y)
 
         # expand e
         x = a + 1
         y = b
-        if self.valid((x,y), num_stones) and (x,y) != prev:
+        if self.valid((x,y), num_stones):
             dist = abs(x - c) + abs(y - d) + cache[(x,y)]
             if dist > best_dist:
                 best_dist = dist
@@ -150,7 +156,7 @@ class env_class:
         # expand s
         x = a
         y = b - 1
-        if self.valid((x,y), num_stones) and (x,y) != prev:
+        if self.valid((x,y), num_stones):
             dist = abs(x - c) + abs(y - d) + cache[(x,y)]
             if dist > best_dist:
                 best_dist = dist
@@ -159,7 +165,7 @@ class env_class:
         # expand w
         x = a - 1
         y = b
-        if self.valid((x,y), num_stones) and (x,y) != prev:
+        if self.valid((x,y), num_stones):
             dist = abs(x - c) + abs(y - d) + cache[(x,y)]
             if dist > best_dist:
                 best_dist = dist
