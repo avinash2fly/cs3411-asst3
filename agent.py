@@ -118,6 +118,8 @@ class env_class:
         a, b = start
         c, d = end
 
+        seen = set([start])
+
         queue = [start]
         # insert nodes into queue based on mdist + prev cost
 
@@ -150,7 +152,7 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if self.valid((x,y), num_stones): # this bit prolly can be a function
+            if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)] # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
                 queue.insert((dist,(x,y)))
@@ -158,7 +160,7 @@ class env_class:
             # expand e
             x = a + 1
             y = b
-            if self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 queue.insert((dist,(x,y)))
@@ -166,7 +168,7 @@ class env_class:
             # expand s
             x = a
             y = b - 1
-            if self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 queue.insert((dist,(x,y)))
@@ -174,7 +176,7 @@ class env_class:
             # expand w
             x = a - 1
             y = b
-            if self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 queue.insert((dist,(x,y)))
