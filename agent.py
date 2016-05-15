@@ -118,7 +118,8 @@ class env_class:
         a, b = start
         c, d = end
 
-        seen = set()
+        # seen set ensures positions are only checked once
+        seen = set([start])
 
         queue = [(0, start)]
         # insert nodes into queue based on mdist + prev cost
@@ -145,7 +146,6 @@ class env_class:
             pos = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
-            seen.add(pos)
 
             if pos == end:
                 return path # how store path tho
@@ -160,6 +160,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)] # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
                 heapq.heappush(queue, (dist,(x,y)))
+                seen.add(pos)
 
             # expand e
             x = a + 1
@@ -168,6 +169,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 heapq.heappush(queue, (dist,(x,y)))
+                seen.add(pos)
 
             # expand s
             x = a
@@ -176,6 +178,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 heapq.heappush(queue, (dist,(x,y)))
+                seen.add(pos)
 
             # expand w
             x = a - 1
@@ -184,6 +187,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
                 heapq.heappush(queue, (dist,(x,y)))
+                seen.add(pos)
 
             # how store path tho?
 
