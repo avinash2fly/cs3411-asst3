@@ -121,9 +121,9 @@ class env_class:
         # seen set ensures positions are only checked once
         seen = set([start])
 
-        queue = [(0, start)]
+        queue = [(0, start, [])]
         # insert nodes into queue based on mdist + prev cost
-        # first val is dist from start
+        # first val is dist from start, third is list of prior nodes i.e. path
 
         # should also discard where agent previously was
         # need to decrement num_stones when necessary
@@ -143,7 +143,7 @@ class env_class:
         while len(queue) > 0:
 
             # pop queue
-            pos = heapq.heappop(queue)
+            _ , pos, path = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
 
@@ -159,8 +159,8 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)] # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                heapq.heappush(queue, (dist,(x,y)))
-                seen.add(pos)
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
+                seen.add(pos) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
             x = a + 1
@@ -168,7 +168,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                heapq.heappush(queue, (dist,(x,y)))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add(pos)
 
             # expand s
@@ -177,7 +177,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                heapq.heappush(queue, (dist,(x,y)))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add(pos)
 
             # expand w
@@ -186,7 +186,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                heapq.heappush(queue, (dist,(x,y)))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add(pos)
 
             # how store path tho?
