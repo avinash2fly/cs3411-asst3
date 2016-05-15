@@ -113,19 +113,28 @@ class env_class:
         return path
 
     def astar(self, start, end, prev, num_stones): # since num_stones changes
+        # prev is previous pos
+        # cache astar costs for each pos in a tuple dict
         a, b = start
         c, d = end
         best_mdist = None
         best_pos = None
 
+        queue = []
+        # insert nodes into queue based on mdist + prev cost
+
         # should also discard where agent previously was
         # need to decrement num_stones when necessary
+
+        # steps:
+        # expand nodes i.e. add the 3 positions to queue which are not the one you came from (skipping if already in queue)
+        # do again on highest priority item
 
         # expand n
         x = a
         y = b + 1
         # prune based on tile
-        if self.valid((x,y), num_stones):
+        if self.valid((x,y), num_stones) and (x,y) != prev: # this bit prolly can be a function
             # check manhattan distance
             best_mdist = abs(x - c) + abs(y - d)
             best_pos = (x,y)
@@ -133,7 +142,7 @@ class env_class:
         # expand e
         x = a + 1
         y = b
-        if self.valid((x,y), num_stones):
+        if self.valid((x,y), num_stones) and (x,y) != prev:
             mdist = abs(x - c) + abs(y - d)
             if mdist > best_mdist:
                 best_mdist = mdist
@@ -142,7 +151,7 @@ class env_class:
         # expand s
         x = a
         y = b - 1
-        if self.valid((x,y), num_stones):
+        if self.valid((x,y), num_stones) and (x,y) != prev:
             mdist = abs(x - c) + abs(y - d)
             if mdist > best_mdist:
                 best_mdist = mdist
@@ -151,7 +160,7 @@ class env_class:
         # expand w
         x = a - 1
         y = b
-        if self.valid((x,y), num_stones):
+        if self.valid((x,y), num_stones) and (x,y) != prev:
             mdist = abs(x - c) + abs(y - d)
             if mdist > best_mdist:
                 best_mdist = mdist
