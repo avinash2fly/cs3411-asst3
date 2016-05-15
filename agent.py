@@ -118,7 +118,7 @@ class env_class:
         a, b = start
         c, d = end
 
-        seen = set([start])
+        seen = set()
 
         queue = [start]
         # insert nodes into queue based on mdist + prev cost
@@ -142,6 +142,7 @@ class env_class:
 
             # pop queue
             pos = queue.pop()
+            seen.add(pos)
 
             if pos == end:
                 return path # how store path tho
