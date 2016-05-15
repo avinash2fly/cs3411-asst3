@@ -6,7 +6,7 @@
 # COMP3411 Artificial Intelligence
 # UNSW Session 1, 2016
 
-import sys, os, socket
+import sys, os, socket, heapq
 
 # tile types?
 # 'T' tree
@@ -120,8 +120,9 @@ class env_class:
 
         seen = set()
 
-        queue = [start]
+        queue = [(0, start)]
         # insert nodes into queue based on mdist + prev cost
+        # first val is dist from start
 
         # should also discard where agent previously was
         # need to decrement num_stones when necessary
@@ -141,8 +142,8 @@ class env_class:
         while len(queue) > 0:
 
             # pop queue
-            pos = queue.pop()
-            # if pos in seen: # maybe?
+            pos = heapq.heappop(queue)
+            # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
             seen.add(pos)
 
@@ -158,7 +159,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)] # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                queue.insert((dist,(x,y)))
+                heapq.heappush(queue, (dist,(x,y)))
 
             # expand e
             x = a + 1
@@ -166,7 +167,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                queue.insert((dist,(x,y)))
+                heapq.heappush(queue, (dist,(x,y)))
 
             # expand s
             x = a
@@ -174,7 +175,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                queue.insert((dist,(x,y)))
+                heapq.heappush(queue, (dist,(x,y)))
 
             # expand w
             x = a - 1
@@ -182,7 +183,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + cost[(x,y)]
                 # insert into priority queue
-                queue.insert((dist,(x,y)))
+                heapq.heappush(queue, (dist,(x,y)))
 
             # how store path tho?
 
