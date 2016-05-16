@@ -52,6 +52,7 @@ def get_action(env):
 
     if not pois:
         # if no pois, go forward unless invalid in which case turn
+        # maybe try to avoid turning multiples times in a row since pointless :/
         direction = env.compass.curr()
         rand1 = random.getrandbits(1)
         rand2 = random.getrandbits(1)
@@ -299,6 +300,8 @@ class env_class:
 
 
     def valid(self, pos, num_stones):
+        if pos not in self.rep:
+            return False # is this best way to do it?
         tile = self.rep[pos]
         if tile == '*':
             return False
