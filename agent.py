@@ -53,28 +53,29 @@ def get_action(env):
     if not pois:
         # if no pois, go forward unless invalid in which case turn
         direction = env.compass.curr()
-        rand = random.getrandbits(1)
+        rand1 = random.getrandbits(1)
+        rand2 = random.getrandbits(1)
         turns = ['l','r']
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-            if env.rep[(env.x, env.y + 1)] == ' ':
+            if rand1 and env.rep[(env.x, env.y + 1)] == ' ':
                 return 'f'
             else:
-                return turns[rand]
+                return turns[rand2]
         elif direction == 'e':
-            if env.rep[(env.x + 1, env.y)] == ' ':
+            if rand1 and env.rep[(env.x + 1, env.y)] == ' ':
                 return 'f'
             else:
-                return turns[rand]
+                return turns[rand2]
         elif direction == 's':
-            if env.rep[(env.x, env.y - 1)] == ' ':
+            if rand1 and env.rep[(env.x, env.y - 1)] == ' ':
                 return 'f'
             else:
-                return turns[rand]
+                return turns[rand2]
         elif direction == 'w':
-            if env.rep[(env.x - 1, env.y)] == ' ':
+            if rand1 and env.rep[(env.x - 1, env.y)] == ' ':
                 return 'f'
             else:
-                return turns[rand]
+                return turns[rand2]
 
     while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
