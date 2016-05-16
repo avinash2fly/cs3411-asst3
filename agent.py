@@ -53,7 +53,13 @@ def get_action(env):
     # pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
     pois += sorted(list(env.axe) + list(env.key) + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y) ) # maybe these 3 lists should be sorted together by mdist
 
-    if not pois:
+    while pois and (not env.path or env.new_poi):
+        # if no path or is new highest priority thing
+        # get list of pois in priority order i.e. gold first, then by dist?
+        pos = pois.pop(0)
+        env.path = env.pathfind(pos) # put in pathfind?
+
+    if not pois and not env.path:
         # if no pois, go forward unless invalid in which case turn
         # maybe try to avoid turning multiples times in a row since pointless :/
         # maybe get it to go towards borders so sees more
@@ -83,15 +89,10 @@ def get_action(env):
             else:
                 return turns[rand2]
 
-    while pois and (not env.path or env.new_poi):
-        # if no path or is new highest priority thing
-        # get list of pois in priority order i.e. gold first, then by dist?
-        pos = pois.pop(0)
-        env.path = env.pathfind(pos) # put in pathfind?
-
     env.new_poi = False
 
     # else continue with prior path
+    print('env.path:')
     print(env.path)
     action = env.path.pop(0)
 
@@ -157,7 +158,7 @@ class env_class:
         
         path = [(self.x, self.y)] + self.astar((self.x, self.y), pos)
         print(path)
-        if not path:
+        if len(path) == 1:
             return [] # no path
         compass = compass_class(self.compass.curr())
 
