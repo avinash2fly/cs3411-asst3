@@ -50,17 +50,29 @@ def get_action(env):
         pois.append(env.gold)
     pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
 
-    # if not pois:
-        # choose a valid direction (i.e. not obstacle) and just walk forward
-        # check f
-        # if good, just f
-        # elif, check r
-        # if good, ['r','f']
-        # elif check l
-        # if good ['l','f']
-        # else go back
-        # ['l','l','f']
-        # return
+    if not pois:
+        # if no pois, go forward unless invalid in which case turn
+        direction = env.compass.curr()
+        if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
+            if env.rep[(env.x, env.y + 1)] == ' ':
+                return ['f']
+            else:
+                return ['l']
+        elif direction == 'e':
+            if env.rep[(env.x + 1, env.y)] == ' ':
+                return ['f']
+            else:
+                return ['l']
+        elif direction == 's':
+            if env.rep[(env.x, env.y - 1)] == ' ':
+                return ['f']
+            else:
+                return ['l']
+        elif direction == 'w':
+            if env.rep[(env.x - 1, env.y)] == ' ':
+                return ['f']
+            else:
+                return ['l']
 
     while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
