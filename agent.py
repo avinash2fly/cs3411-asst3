@@ -109,6 +109,8 @@ class env_class:
         # search towards pos from current xy
         
         path = self.astar((curr.x, curr.y), pos)
+        if not path:
+            return [] # no path
         compass = compass_class(self.compass.curr())
 
         # convert path to sequence of moves
@@ -178,11 +180,6 @@ class env_class:
             else:
                 # bad path
                 return []
-            # add appropriate actions to get to next from curr
-            moves.append('blah') # etc.
-            # update direction using temp compass
-
-
 
         return path
 
