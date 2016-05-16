@@ -226,6 +226,10 @@ class env_class:
                 # bad path
                 print('Bad path')
                 return []
+            if self.rep(next_tile) == '-' and self.has_key:
+                moves.append('u')
+            elif self.rep(next_tile) == 'T' and self.has_axe:
+                moves.append('c')
             moves.append('f')
         return moves
 
