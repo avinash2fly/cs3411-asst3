@@ -44,6 +44,8 @@ class compass_class:
 def get_action(env):
     # action = 'f' # placeholder
     action = raw_input('Action: ')
+    if action:
+        return action # for debugging
 
     pois = []
     if env.gold:
@@ -53,6 +55,8 @@ def get_action(env):
     if not pois:
         # if no pois, go forward unless invalid in which case turn
         # maybe try to avoid turning multiples times in a row since pointless :/
+        # maybe get it to go towards borders so sees more
+        # also should favour forward movement over turning so more actual moving
         direction = env.compass.curr()
         rand1 = random.getrandbits(1)
         rand2 = random.getrandbits(1)
