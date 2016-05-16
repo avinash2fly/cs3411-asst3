@@ -6,7 +6,7 @@
 # COMP3411 Artificial Intelligence
 # UNSW Session 1, 2016
 
-import sys, os, socket, heapq
+import sys, os, socket, heapq, random
 
 # tile types?
 # 'T' tree
@@ -53,26 +53,28 @@ def get_action(env):
     if not pois:
         # if no pois, go forward unless invalid in which case turn
         direction = env.compass.curr()
+        rand = random.getrandbits(1)
+        turns = ['l','r']
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
             if env.rep[(env.x, env.y + 1)] == ' ':
                 return 'f'
             else:
-                return 'l'
+                return turns[rand]
         elif direction == 'e':
             if env.rep[(env.x + 1, env.y)] == ' ':
                 return 'f'
             else:
-                return 'l'
+                return turns[rand]
         elif direction == 's':
             if env.rep[(env.x, env.y - 1)] == ' ':
                 return 'f'
             else:
-                return 'l'
+                return turns[rand]
         elif direction == 'w':
             if env.rep[(env.x - 1, env.y)] == ' ':
                 return 'f'
             else:
-                return 'l'
+                return turns[rand]
 
     while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
