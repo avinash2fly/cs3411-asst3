@@ -275,22 +275,18 @@ class env_class:
             return True
 
     def check(self, pos):
-        if self.rep[pos] == 'a':
-            if pos not in self.axe:
-                self.axe.add(pos)
-                self.new_poi = True
-        elif self.rep[pos] == 'k':
-            if pos not in self.key:
-                self.key.add(pos)
-                self.new_poi = True
-        elif self.rep[pos] == 'o':
-            if pos not in self.stone:
-                self.stone.add(pos)
-                self.new_poi = True
-        elif self.rep[pos] == 'g':
-            if self.gold != pos:
-                self.gold = pos
-                self.new_poi = True
+        if self.rep[pos] == 'a' and pos not in self.axe:
+            self.axe.add(pos)
+            self.new_poi = True
+        elif self.rep[pos] == 'k' and pos not in self.key:
+            self.key.add(pos)
+            self.new_poi = True
+        elif self.rep[pos] == 'o' and pos not in self.stone:
+            self.stone.add(pos)
+            self.new_poi = True
+        elif self.rep[pos] == 'g'and self.gold != pos:
+            self.gold = pos
+            self.new_poi = True
         # should also store doors and trees?
 
     def on_poi(self):
