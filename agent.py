@@ -118,6 +118,30 @@ class env_class:
                 break # end of path
             next_tile = path[i+1]
             # compare direction and relative positions
+            x, y = curr_tile
+            a, b = next_tile
+            direction = compass.curr()
+            if a == x and b == y + 1:
+                # go north
+                if direction == 'n':
+                    moves.append('f')
+                elif direction == 'e':
+                    compass.left()
+                    moves.append('l')
+                    moves.append('f')
+                elif direction == 's':
+                    compass.left()
+                    compass.left()
+                    moves.append('l')
+                    moves.append('l')
+                    moves.append('f')
+                elif direction == 'w':
+                    compass.right()
+                    moves.append('r')
+                    moves.append('f')
+            elif blah:
+            else:
+                # bad path
             # add appropriate actions to get to next from curr
             moves.append('blah') # etc.
             # update direction using temp compass
