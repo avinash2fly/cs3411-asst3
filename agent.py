@@ -123,22 +123,18 @@ class env_class:
             direction = compass.curr()
             if a == x and b == y + 1:
                 # go north
-                if direction == 'n':
-                    moves.append('f')
-                elif direction == 'e':
+                if direction == 'e':
                     compass.left()
                     moves.append('l')
-                    moves.append('f')
                 elif direction == 's':
                     compass.left()
                     compass.left()
                     moves.append('l')
                     moves.append('l')
-                    moves.append('f')
                 elif direction == 'w':
                     compass.right()
                     moves.append('r')
-                    moves.append('f')
+                moves.append('f')
             elif blah:
             else:
                 # bad path
