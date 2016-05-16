@@ -141,8 +141,6 @@ class env_class:
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos, fourth is dist from start
         # first being 0 is dummy since will immediately be popped
 
-        # need to decrement num_stones when necessary
-
         # steps:
         # take first node from queue
         # expand nodes from that node
@@ -158,9 +156,6 @@ class env_class:
 
             if pos == end:
                 return path
-
-            if pos in cost:
-                continue # actually is this right? need to be able to skip already expanded nodes, but not sure if this is the way
 
             # expand n
             x = a
