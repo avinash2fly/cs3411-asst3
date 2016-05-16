@@ -135,7 +135,12 @@ class env_class:
                     compass.right()
                     moves.append('r')
                 moves.append('f')
-            elif blah:
+            elif a == x + 1 and b == y:
+                # go east
+            elif a == x and b == y - 1:
+                # go south
+            elif a == x - 1 and b == y:
+                # go west
             else:
                 # bad path
             # add appropriate actions to get to next from curr
