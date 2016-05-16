@@ -50,7 +50,8 @@ def get_action(env):
     pois = []
     if env.gold:
         pois.append(env.gold)
-    pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
+    # pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
+    pois += sorted(list(env.axe) + list(env.key) + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y) ) # maybe these 3 lists should be sorted together by mdist
 
     if not pois:
         # if no pois, go forward unless invalid in which case turn
