@@ -226,9 +226,9 @@ class env_class:
                 # bad path
                 print('Bad path')
                 return []
-            if self.rep(next_tile) == '-' and self.has_key:
+            if self.rep[next_tile] == '-' and self.has_key:
                 moves.append('u')
-            elif self.rep(next_tile) == 'T' and self.has_axe:
+            elif self.rep[next_tile] == 'T' and self.has_axe:
                 moves.append('c')
             moves.append('f')
         return moves
@@ -315,9 +315,9 @@ class env_class:
             return False
         elif tile == '.':
             return False
-        elif tile == 'T' and self.axe == False:
+        elif tile == 'T' and self.has_axe == False:
             return False
-        elif tile == '-' and self.key == False:
+        elif tile == '-' and self.has_key == False:
             return False
         elif tile == '~' and num_stones == 0:
             return False
