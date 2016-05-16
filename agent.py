@@ -55,24 +55,24 @@ def get_action(env):
         direction = env.compass.curr()
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
             if env.rep[(env.x, env.y + 1)] == ' ':
-                return ['f']
+                return 'f'
             else:
-                return ['l']
+                return 'l'
         elif direction == 'e':
             if env.rep[(env.x + 1, env.y)] == ' ':
-                return ['f']
+                return 'f'
             else:
-                return ['l']
+                return 'l'
         elif direction == 's':
             if env.rep[(env.x, env.y - 1)] == ' ':
-                return ['f']
+                return 'f'
             else:
-                return ['l']
+                return 'l'
         elif direction == 'w':
             if env.rep[(env.x - 1, env.y)] == ' ':
-                return ['f']
+                return 'f'
             else:
-                return ['l']
+                return 'l'
 
     while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
