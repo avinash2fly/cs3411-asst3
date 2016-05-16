@@ -47,11 +47,16 @@ def get_action(env):
     if action:
         return action # for debugging
 
+    # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
     pois = []
     if env.gold:
         pois.append(env.gold)
     # pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
-    pois += sorted(list(env.axe) + list(env.key) + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y) ) # maybe these 3 lists should be sorted together by mdist
+    pois += sorted(list(env.axe) + list(env.key) + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y) )
+    if env.has_key:
+        pois += sorted(env.doors, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
+    if env.has_axe:
+        pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
@@ -139,6 +144,8 @@ class env_class:
         self.key = set()
         self.stone = set()
         self.gold = False
+        self.trees = set()
+        self.doors = set()
 
         # need to store what agent has
         self.has_axe = False
@@ -339,7 +346,12 @@ class env_class:
         elif self.rep[pos] == 'g'and self.gold != pos:
             self.gold = pos
             self.new_poi = True
-        # should also store doors and trees?
+        elif self.rep[pos] == 'T' and pos not in self.trees:
+            self.trees.add(pos)
+            self.new_poi = True
+        elif self.rep[pos] == '-' and pos not in self.doors:
+            self.doors.add(pos)
+            self.new_poi = True
 
     def on_poi(self):
         pos = (self.x, self.y)
