@@ -40,7 +40,6 @@ class compass_class:
         self.i = (self.i+1) % len(self.directions)
     def curr(self):
         return self.directions[self.i]
-compass = compass_class()
 
 def get_action(env):
     # action = 'f' # placeholder
@@ -110,7 +109,7 @@ class env_class:
         # search towards pos from current xy
         
         path = self.astar((curr.x, curr.y), pos)
-        direction = self.compass.curr() # but should be separate temp compass since not actually turning so should update class to take initial direction
+        compass = compass_class(self.compass.curr())
 
         # convert path to sequence of moves
         moves = []
