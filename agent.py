@@ -136,7 +136,6 @@ class env_class:
                 elif direction == 'w':
                     compass.right()
                     moves.append('r')
-                moves.append('f')
             elif a == x + 1 and b == y:
                 # go east
                 if direction == 's':
@@ -150,7 +149,6 @@ class env_class:
                 elif direction == 'n':
                     compass.right()
                     moves.append('r')
-                moves.append('f')
             elif a == x and b == y - 1:
                 # go south
                 if direction == 'w':
@@ -180,8 +178,8 @@ class env_class:
             else:
                 # bad path
                 return []
-
-        return path
+            moves.append('f')
+        return moves
 
     def astar(self, start, end):
 
