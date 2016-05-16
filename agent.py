@@ -45,8 +45,11 @@ def get_action(env):
     # action = 'f' # placeholder
     action = raw_input('Action: ')
 
-    # if new highest priority thing:
-        # path = env.pathfind(pos)
+    while not env.path or env.new_poi:
+        # if no path or is new highest priority thing
+        # get list of pois in priority order i.e. gold first, then by dist?
+        env.path = env.pathfind(pos) # put in pathfind?
+    env.new_poi = False
 
     # else continue with prior path
     action = env.path.pop(0)
@@ -100,6 +103,9 @@ class env_class:
         self.has_key = False
         self.num_stones = 0
         self.has_gold = False
+
+        self.path = []
+        self.new_poi = False
 
         # agent loc
         self.x = 0
@@ -270,13 +276,21 @@ class env_class:
 
     def check(self, pos):
         if self.rep[pos] == 'a':
-            self.axe.add(pos)
+            if pos not in self.axe:
+                self.axe.add(pos)
+                self.new_poi = True
         elif self.rep[pos] == 'k':
-            self.key.add(pos)
+            if pos not in self.key:
+                self.key.add(pos)
+                self.new_poi = True
         elif self.rep[pos] == 'o':
-            self.stone.add(pos)
+            if pos not in self.stone:
+                self.stone.add(pos)
+                self.new_poi = True
         elif self.rep[pos] == 'g':
-            self.gold = pos
+            if self.gold != pos:
+                self.gold = pos
+                self.new_poi = True
         # should also store doors and trees?
 
     def on_poi(self):
