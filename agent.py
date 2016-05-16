@@ -44,10 +44,10 @@ def get_action(env):
     action = raw_input('Action: ')
 
     # if new highest priority thing:
-        path = env.pathfind(pos)
+        # path = env.pathfind(pos)
 
     # else continue with prior path
-    action = path.pop(0)
+    action = env.path.pop(0)
 
     return action # action must be a single char string
 
@@ -105,28 +105,42 @@ class env_class:
 
     def pathfind(self, pos):
         # search towards pos from current xy
-        targ_x, targ_y = pos
-        x = self.x
-        y = self.y
-        path = [] # path of actions or path of positions? probably positions
+        
+        path = self.astar((curr.x, curr.y), pos)
+        direction = self.compass.curr() # but should be separate temp compass since not actually turning so should update class to take initial direction
+
+        # convert path to sequence of moves
+        moves = []
+        for i, curr_tile in enumerate(path):
+            if i + 1 >= len(path):
+                break # end of path
+            next_tile = path[i+1]
+            # compare direction and relative positions
+            # add appropriate actions to get to next from curr
+            moves.append('blah') # etc.
+            # update direction using temp compass
+
+
 
         return path
 
-    def astar(self, start, end, num_stones): # since num_stones changes
+    def astar(self, start, end):
+
+        # astar search may be less useful since no weights, every node is equal distance to neighbours
+
         # prev is previous pos
         # cost cost to get to pos for each pos in a tuple dict
         a, b = start
         c, d = end
 
-        # seen set ensures positions are only checked once
+        # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
 
-        queue = [(0, start, [], 0)]
+        queue = [(0, start, [], 0, self.num_stones)]
         # insert nodes into queue based on mdist + prev cost
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos, fourth is dist from start
         # first being 0 is dummy since will immediately be popped
 
-        # should also discard where agent previously was
         # need to decrement num_stones when necessary
 
         # steps:
@@ -135,21 +149,15 @@ class env_class:
         # add them to queue based on cost
         # repeat
 
-        # snippets which ill prolly needed
-        if (x,y) not in cost: # cost records estimated cost of shortest path through (x,y)
-            cost[(x,y)] = abs(x - c) + abs(y - d) + cost[(a,b)]
-
-        # end snippets
-
         while len(queue) > 0:
 
             # pop queue
-            _ , pos, path, prev = heapq.heappop(queue)
+            _ , pos, path, prev, num_stones = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
 
             if pos == end:
-                return path # how store path tho
+                return path
 
             if pos in cost:
                 continue # actually is this right? need to be able to skip already expanded nodes, but not sure if this is the way
@@ -160,7 +168,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1, num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
@@ -169,7 +177,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1, num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
             # expand s
@@ -178,7 +186,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1, num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
             # expand w
@@ -187,12 +195,10 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], prev + 1, num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
-            # how store path tho?
-
-        return best_pos
+        return [] # no path
 
 
     def valid(self, pos, num_stones):
