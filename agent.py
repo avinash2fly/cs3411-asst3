@@ -28,7 +28,7 @@ import sys, os, socket, heapq
 # U unlock
 
 class compass_class:
-    def __init__(self, start):
+    def __init__(self, start = 'n'):
         self.directions = ['n', 'e', 's', 'w']
         if start in self.directions:
             self.i = self.directions.index(start)
@@ -83,6 +83,7 @@ def get_action(env):
     env.new_poi = False
 
     # else continue with prior path
+    print(env.path)
     action = env.path.pop(0)
 
     return action # action must be a single char string
@@ -145,7 +146,7 @@ class env_class:
     def pathfind(self, pos):
         # search towards pos from current xy
         
-        path = self.astar((curr.x, curr.y), pos)
+        path = self.astar((self.x, self.y), pos)
         if not path:
             return [] # no path
         compass = compass_class(self.compass.curr())
