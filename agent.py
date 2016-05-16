@@ -137,12 +137,47 @@ class env_class:
                 moves.append('f')
             elif a == x + 1 and b == y:
                 # go east
+                if direction == 's':
+                    compass.left()
+                    moves.append('l')
+                elif direction == 'w':
+                    compass.left()
+                    compass.left()
+                    moves.append('l')
+                    moves.append('l')
+                elif direction == 'n':
+                    compass.right()
+                    moves.append('r')
+                moves.append('f')
             elif a == x and b == y - 1:
                 # go south
+                if direction == 'w':
+                    compass.left()
+                    moves.append('l')
+                elif direction == 'n':
+                    compass.left()
+                    compass.left()
+                    moves.append('l')
+                    moves.append('l')
+                elif direction == 'e':
+                    compass.right()
+                    moves.append('r')
             elif a == x - 1 and b == y:
                 # go west
+                if direction == 'n':
+                    compass.left()
+                    moves.append('l')
+                elif direction == 'e':
+                    compass.left()
+                    compass.left()
+                    moves.append('l')
+                    moves.append('l')
+                elif direction == 's':
+                    compass.right()
+                    moves.append('r')
             else:
                 # bad path
+                return []
             # add appropriate actions to get to next from curr
             moves.append('blah') # etc.
             # update direction using temp compass
