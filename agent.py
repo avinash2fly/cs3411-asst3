@@ -47,6 +47,11 @@ def get_action(env):
     if action:
         return action # for debugging
 
+    if env.has_gold:
+        if not env.path:
+            env.path = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
+        return env.path.pop(0)
+
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
     pois = []
     if env.gold:
