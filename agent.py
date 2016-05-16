@@ -146,7 +146,8 @@ class env_class:
     def pathfind(self, pos):
         # search towards pos from current xy
         
-        path = self.astar((self.x, self.y), pos)
+        path = [(self.x, self.y)] + self.astar((self.x, self.y), pos)
+        print(path)
         if not path:
             return [] # no path
         compass = compass_class(self.compass.curr())
@@ -215,6 +216,7 @@ class env_class:
                     moves.append('r')
             else:
                 # bad path
+                print('Bad path')
                 return []
             moves.append('f')
         return moves
