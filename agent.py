@@ -28,9 +28,12 @@ import sys, os, socket, heapq
 # U unlock
 
 class compass_class:
-    def __init__(self):
+    def __init__(self, start):
         self.directions = ['n', 'e', 's', 'w']
-        self.i = 0 # "north" is the starting direction
+        if start in self.directions:
+            self.i = self.directions.index(start)
+        else:
+            self.i = 0 # "north" is default starting direction
     def left(self):
         self.i = (self.i-1) % len(self.directions)
     def right(self):
