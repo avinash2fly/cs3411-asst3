@@ -45,10 +45,29 @@ def get_action(env):
     # action = 'f' # placeholder
     action = raw_input('Action: ')
 
-    while not env.path or env.new_poi:
+    pois = []
+    if env.gold:
+        pois.append(env.gold)
+    pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
+
+    # if not pois:
+        # choose a valid direction (i.e. not obstacle) and just walk forward
+        # check f
+        # if good, just f
+        # elif, check r
+        # if good, ['r','f']
+        # elif check l
+        # if good ['l','f']
+        # else go back
+        # ['l','l','f']
+        # return
+
+    while pois and (not env.path or env.new_poi):
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
+        pos = pois.pop(0)
         env.path = env.pathfind(pos) # put in pathfind?
+
     env.new_poi = False
 
     # else continue with prior path
