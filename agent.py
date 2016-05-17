@@ -48,18 +48,13 @@ def get_action(env):
     #     env.path = []
     #     return action # for debugging
 
-    # new_poi essentially means needs to recalculate path
-    # maybe should be renamed
-    # maybe there should be an if not new_poi at beginning so only does
-    # rest if necessary
-
     if env.has_gold:
         if not env.path:
             env.path = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
         return env.path.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
-    if env.gold and (not env.path or env.new_poi):
+    if env.gold:
         # first search with current tools
         path = env.pathfind(env.gold)
         # if not path:
@@ -318,11 +313,10 @@ class env_class:
                 # bad path
                 print('Bad path')
                 return []
-            if next_tile in self.rep:
-                if self.rep[next_tile] == '-' and self.has_key:
-                    moves.append('u')
-                elif self.rep[next_tile] == 'T' and self.has_axe:
-                    moves.append('c')
+            if self.rep[next_tile] == '-' and self.has_key:
+                moves.append('u')
+            elif self.rep[next_tile] == 'T' and self.has_axe:
+                moves.append('c')
             moves.append('f')
         return moves
 
@@ -371,10 +365,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                if (x,y) in self.rep and self.rep[(x,y)] == '~':
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones - 1))
-                else:
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
@@ -383,10 +374,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                if (x,y) in self.rep and self.rep[(x,y)] == '~':
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones - 1))
-                else:
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
             # expand s
@@ -395,10 +383,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                if (x,y) in self.rep and self.rep[(x,y)] == '~':
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones - 1))
-                else:
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
             # expand w
@@ -407,21 +392,15 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                if (x,y) in self.rep and self.rep[(x,y)] == '~':
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones - 1))
-                else:
-                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones))
+                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
                 seen.add(pos)
 
         return [] # no path
 
 
     def valid(self, pos, num_stones = 0):
-        x, y = pos
-        if x > self.border_e or x < self.border_w or y > self.border_n or y < self.border_s:
-            return False
         if pos not in self.rep:
-            return True # treat ?s as valid until proven otherwise
+            return False # is this best way to do it?
         tile = self.rep[pos]
         if tile == '*':
             return False
@@ -454,8 +433,6 @@ class env_class:
             self.new_poi = True
         elif self.rep[pos] == '-' and pos not in self.doors:
             self.doors.add(pos)
-            self.new_poi = True
-        elif self.rep[pos] != ' ':
             self.new_poi = True
 
     def on_poi(self):
