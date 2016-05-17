@@ -97,7 +97,7 @@ def get_action(env):
         elif direction == 'w':
             x = env.x - 1
             y = env.y
-        if env.rep[(x,y)] == ' ' and not env.hug_start:
+        if env.valid((x,y)) and not env.hug_start:
             return 'f'
         else:
             env.hug_start = (env.x,env.y)
