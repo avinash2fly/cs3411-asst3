@@ -97,10 +97,10 @@ def get_action(env):
         elif direction == 'w':
             x = env.x - 1
             y = env.y
-        if env.rep[(x,y)] == ' ':
+        if env.rep[(x,y)] == ' ' and not env.hug_start:
             return 'f'
         else:
-            env.hug_start = (curr.x,curr.y)
+            env.hug_start = (env.x,env.y)
 
     if env.hug_start and not env.path:
         direction = env.compass.curr()
