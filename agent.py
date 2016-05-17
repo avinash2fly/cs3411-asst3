@@ -48,6 +48,11 @@ def get_action(env):
     #     env.path = []
     #     return action # for debugging
 
+    # new_poi essentially means needs to recalculate path
+    # maybe should be renamed
+    # maybe there should be an if not new_poi at beginning so only does
+    # rest if necessary
+
     if env.has_gold:
         if not env.path:
             env.path = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
@@ -400,7 +405,7 @@ class env_class:
 
     def valid(self, pos, num_stones = 0):
         if pos not in self.rep:
-            return False # is this best way to do it?
+            return False # out of borders
         tile = self.rep[pos]
         if tile == '*':
             return False
@@ -475,6 +480,8 @@ class env_class:
                 self.y += 1
                 # top row is new
                 for x in range(-2, 3):
+                    if (self.x + x, self.y + 2) in self.rep and self.rep[(self.x + x, self.y + 2)] == '?' and view[(x,2)] != ' ':
+                        self.new_poi = True
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
                     self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
@@ -488,6 +495,8 @@ class env_class:
                 self.x += 1
                 # right col is new
                 for x in range(-2, 3):
+                    if (self.x + 2, self.y - x) in self.rep and self.rep[(self.x + 2, self.y - x)] == '?' and view[(x,2)] != ' ':
+                        self.new_poi = True
                     self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
                     self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
@@ -501,6 +510,8 @@ class env_class:
                 self.y -= 1
                 # bottom row is new
                 for x in range(-2, 3):
+                    if (self.x - x, self.y - 2) in self.rep and self.rep[(self.x - x, self.y - 2)] == '?' and view[(x,2)] != ' ':
+                        self.new_poi = True
                     self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
                     self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
@@ -514,6 +525,8 @@ class env_class:
                 self.x -= 1
                 # left col is new
                 for x in range(-2, 3):
+                    if (self.x - 2, self.y + x) in self.rep and self.rep[(self.x - 2, self.y + x)] == '?' and view[(x,2)] != ' ':
+                        self.new_poi = True
                     self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
                     self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
