@@ -379,6 +379,10 @@ class env_class:
             self.num_stones -= 1
             # if self.num_stones < 0:
             #     ded
+        elif self.rep[pos] == '-':
+            self.doors.remove(pos)
+        elif self.rep[pos] == 'T':
+            self.trees.remove(pos)
 
     def update(self, view, action):
         direction = self.compass.curr()
