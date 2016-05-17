@@ -452,14 +452,21 @@ class env_class:
             self.compass.right()
         elif action == 'c' or action == 'u':
             # update right in front since tree or door gone
+            x = None
+            y = None
             if direction == 'n':
-                self.rep[(self.x, self.y + 1)] = view[(0,1)]
+                x = self.x
+                y = self.y + 1
             elif direction == 'e':
-                self.rep[(self.x + 1, self.y)] = view[(0,1)]
+                x = self.x + 1
+                y = self.y
             elif direction == 's':
-                self.rep[(self.x, self.y - 1)] = view[(0,1)]
+                x = self.x
+                y = self.y - 1
             elif direction == 'w':
-                self.rep[(self.x - 1, self.y)] = view[(0,1)]
+                x = self.x - 1
+                y = self.y
+            self.rep[(x, y)] = view[(0,1)]
 
     def show(self):
         # print(self.border_n)
