@@ -43,10 +43,10 @@ class compass_class:
 
 def get_action(env):
     # action = 'f' # placeholder
-    action = raw_input('Action: ')
-    if action:
-        env.path = []
-        return action # for debugging
+    # action = raw_input('Action: ')
+    # if action:
+    #     env.path = []
+    #     return action # for debugging
 
     if env.has_gold:
         if not env.path:
