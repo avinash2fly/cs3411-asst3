@@ -81,6 +81,7 @@ def get_action(env):
         # hug borders
         # go forward
         # if cant go forward, go right and try to go left and repeat
+        direction = env.compass.curr()
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
             if env.rep[(env.x, env.y + 1)] == ' ':
                 return 'f'
