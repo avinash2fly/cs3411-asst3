@@ -418,7 +418,7 @@ class env_class:
 
     def valid(self, pos, num_stones = 0):
         x, y = pos
-        if x > self.border_e or x < self.border_w or y > border_n or y < border_s:
+        if x > self.border_e or x < self.border_w or y > self.border_n or y < self.border_s:
             return False
         if pos not in self.rep:
             return True # treat ?s as valid until proven otherwise
