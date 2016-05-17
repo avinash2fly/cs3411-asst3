@@ -54,17 +54,25 @@ def get_action(env):
         return env.path.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
-    pois = []
     if env.gold:
-        pois.append(env.gold)
-    # pois += list(env.axe) + list(env.key) + list(env.stone) # maybe these 3 lists should be sorted together by mdist
-    tools = []
+        # first search with current tools
+        path = env.pathfind(env.gold)
+        # if not path:
+            # then figure out if stones required and how many
+            # for i in range(0, 5):
+            #     path = env.pathfind(env.gold, num_stones = i)
+            #     if path:
+            #         break
+        if path:
+            env.path = path
+    
+    pois = []
     if not env.has_key:
-        tools += list(env.key)
+        pois += list(env.key)
     if not env.has_axe:
-        tools += list(env.axe)
+        pois += list(env.axe)
     # dont go for stones if would use two to get
-    pois += sorted(tools + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
+    pois += sorted(pois + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     if env.has_key:
         pois += sorted(env.doors, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
