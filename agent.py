@@ -78,37 +78,62 @@ def get_action(env):
         env.path = env.pathfind(pos) # put in pathfind?
 
     if not pois and not env.path:
-        # if no pois, go forward unless invalid in which case turn
-        # maybe try to avoid turning multiples times in a row since pointless :/
-        # maybe get it to go towards borders so sees more. search edges?
-        # maybe hug borders, like always going left in maze. could result in loop tho. to solve, save pos when first hit border so if seen again, must be looping.
-        # maybe go to spots you havent been yet, since may increase vision
-        # goal is to increase vision so can find pois
-        # also should favour forward movement over turning so more actual moving
-        direction = env.compass.curr()
-        rand1 = random.getrandbits(1)
-        rand2 = random.getrandbits(1)
-        turns = ['l','r']
+        # hug borders
+        # go forward
+        # if cant go forward, go right and try to go left and repeat
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-            if rand1 and env.rep[(env.x, env.y + 1)] == ' ':
+            if env.rep[(env.x, env.y + 1)] == ' ':
                 return 'f'
             else:
-                return turns[rand2]
+                env.path = ['r','f','l']
         elif direction == 'e':
-            if rand1 and env.rep[(env.x + 1, env.y)] == ' ':
+            if env.rep[(env.x + 1, env.y)] == ' ':
                 return 'f'
             else:
-                return turns[rand2]
+                env.path = ['r','f','l']
         elif direction == 's':
-            if rand1 and env.rep[(env.x, env.y - 1)] == ' ':
+            if env.rep[(env.x, env.y - 1)] == ' ':
                 return 'f'
             else:
-                return turns[rand2]
+                env.path = ['r','f','l']
         elif direction == 'w':
-            if rand1 and env.rep[(env.x - 1, env.y)] == ' ':
+            if env.rep[(env.x - 1, env.y)] == ' ':
                 return 'f'
             else:
-                return turns[rand2]
+                env.path = ['r','f','l']
+
+    # if not pois and not env.path:
+    #     # if no pois, go forward unless invalid in which case turn
+    #     # maybe try to avoid turning multiples times in a row since pointless :/
+    #     # maybe get it to go towards borders so sees more. search edges?
+    #     # maybe hug borders, like always going left in maze. could result in loop tho. to solve, save pos when first hit border so if seen again, must be looping.
+    #     # maybe go to spots you havent been yet, since may increase vision
+    #     # goal is to increase vision so can find pois
+    #     # also should favour forward movement over turning so more actual moving
+    #     direction = env.compass.curr()
+    #     rand1 = random.getrandbits(1)
+    #     rand2 = random.getrandbits(1)
+    #     turns = ['l','r']
+        # if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
+        #     if rand1 and env.rep[(env.x, env.y + 1)] == ' ':
+        #         return 'f'
+        #     else:
+        #         return turns[rand2]
+        # elif direction == 'e':
+        #     if rand1 and env.rep[(env.x + 1, env.y)] == ' ':
+        #         return 'f'
+        #     else:
+        #         return turns[rand2]
+        # elif direction == 's':
+        #     if rand1 and env.rep[(env.x, env.y - 1)] == ' ':
+        #         return 'f'
+        #     else:
+        #         return turns[rand2]
+        # elif direction == 'w':
+        #     if rand1 and env.rep[(env.x - 1, env.y)] == ' ':
+        #         return 'f'
+        #     else:
+        #         return turns[rand2]
 
     env.new_poi = False
 
