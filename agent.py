@@ -479,7 +479,11 @@ class env_class:
                     self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
                 self.rep[(self.x, self.y - 1)] = view[(0,-1)]
-                self.border_n = max(self.y + 2, self.border_n)
+                if self.y + 2 > self.border_n:
+                    self.border_n = self.y + 2
+                    for x in range(border_w, border_e + 1):
+                        if (x, self.border_n) not in self.rep:
+                            self.rep[(x, self.border_n)] = '?'
             elif direction == 'e':
                 self.x += 1
                 # right col is new
@@ -488,7 +492,11 @@ class env_class:
                     self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
                 self.rep[(self.x - 1, self.y)] = view[(0,-1)]
-                self.border_e = max(self.x + 2, self.border_e)
+                if self.x + 2 > self.border_e:
+                    self.border_e = self.x + 2
+                    for y in range(border_s, border_n + 1):
+                        if (self.border_e, y) not in self.rep:
+                            self.rep[(self.border_e, y)]
             elif direction == 's':
                 self.y -= 1
                 # bottom row is new
@@ -497,7 +505,11 @@ class env_class:
                     self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
                 self.rep[(self.x, self.y + 1)] = view[(0,-1)]
-                self.border_s = min(self.y - 2, self.border_s)
+                if self.y - 2 < self.border_s:
+                    self.border_s = self.y - 2
+                    for x in range(border_w, border_e + 1):
+                        if (x, self.border_s) not in self.rep:
+                            self.rep[(x, self.border_s)] = '?'
             elif direction == 'w':
                 self.x -= 1
                 # left col is new
@@ -506,7 +518,11 @@ class env_class:
                     self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
                 self.rep[(self.x + 1, self.y)] = view[(0,-1)]
-                self.border_w = min(self.x - 2, self.border_w)
+                if self.x - 2 < self.border_w:
+                    self.border_w = self.x - 2
+                    for y in range(border_s, border_n + 1):
+                        if (self.border_w, y) not in self.rep:
+                            self.rep[(self.border_w, y)]
             self.on_poi()
         elif action == 'l':
             self.compass.left()
