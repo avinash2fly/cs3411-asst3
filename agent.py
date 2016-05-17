@@ -228,8 +228,12 @@ class env_class:
 
     def pathfind(self, pos):
         # search towards pos from current xy
-        
-        path = [(self.x, self.y)] + self.astar((self.x, self.y), pos)
+        path = []
+        for num_stones in range(0, self.num_stones + 1):
+            path = self.astar((self.x, self.y), pos, num_stones)
+            if path:
+                break
+        path = [(self.x, self.y)] + path
         print(path)
         if len(path) == 1:
             return [] # no path
@@ -308,7 +312,7 @@ class env_class:
             moves.append('f')
         return moves
 
-    def astar(self, start, end):
+    def astar(self, start, end, num_stones):
 
         # astar search may be less useful since no weights, every node is equal distance to neighbours
 
@@ -319,7 +323,11 @@ class env_class:
         # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
 
-        queue = [(0, start, [], self.num_stones)]
+        # minimize stone usage
+        # use a for loop
+        # i.e. search for a path using 0 stones, then using 1 stones, etc. up to actual amount of stones
+
+        queue = [(0, start, [], num_stones)]
         # insert nodes into queue based on mdist + prev cost
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos
         # first being 0 is dummy since will immediately be popped
