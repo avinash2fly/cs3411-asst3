@@ -552,7 +552,7 @@ class env_class:
                 elif (x,y) in self.rep:
                     line += self.rep[(x, y)]
                 else:
-                    line += '?' # unmapped
+                    line += '/' # should never be printed
             line += '|'
             print(line)
         line = '+'
