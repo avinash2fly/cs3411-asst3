@@ -48,13 +48,18 @@ def get_action(env):
     #     env.path = []
     #     return action # for debugging
 
+    # new_poi essentially means needs to recalculate path
+    # maybe should be renamed
+    # maybe there should be an if not new_poi at beginning so only does
+    # rest if necessary
+
     if env.has_gold:
         if not env.path:
             env.path = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
         return env.path.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
-    if env.gold:
+    if env.gold and (not env.path or env.new_poi):
         # first search with current tools
         path = env.pathfind(env.gold)
         # if not path:
@@ -400,7 +405,7 @@ class env_class:
 
     def valid(self, pos, num_stones = 0):
         if pos not in self.rep:
-            return False # is this best way to do it?
+            return True # treat ?s as valid until proven otherwise
         tile = self.rep[pos]
         if tile == '*':
             return False
@@ -433,6 +438,8 @@ class env_class:
             self.new_poi = True
         elif self.rep[pos] == '-' and pos not in self.doors:
             self.doors.add(pos)
+            self.new_poi = True
+        elif self.rep[pos] != ' ':
             self.new_poi = True
 
     def on_poi(self):
