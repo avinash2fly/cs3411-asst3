@@ -79,29 +79,50 @@ def get_action(env):
 
     if not pois and not env.path:
         # hug borders
-        # go forward
-        # if cant go forward, go right and try to go left and repeat
+        # bad strat for large empty space in middle
+        # go forward and turn left
+        # if cant go forward, turn right until can go forward then go forward and turn left
         direction = env.compass.curr()
+        x = None
+        y = None
         if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-            if env.rep[(env.x, env.y + 1)] == ' ':
-                return 'f'
-            else:
-                env.path = ['r','f','l']
+            x = env.x
+            y = env.y + 1
         elif direction == 'e':
-            if env.rep[(env.x + 1, env.y)] == ' ':
-                return 'f'
-            else:
-                env.path = ['r','f','l']
+            x = env.x + 1
+            y = env.y
         elif direction == 's':
-            if env.rep[(env.x, env.y - 1)] == ' ':
-                return 'f'
-            else:
-                env.path = ['r','f','l']
+            x = env.x
+            y = env.y - 1
         elif direction == 'w':
-            if env.rep[(env.x - 1, env.y)] == ' ':
-                return 'f'
-            else:
-                env.path = ['r','f','l']
+            x = env.x - 1
+            y = env.y
+        if env.rep[(x,y)] == ' ':
+            return 'f'
+        else:
+            env.hug_start = (curr.x,curr.y)
+
+    if env.hug_start and not env.path:
+        direction = env.compass.curr()
+        # if reached hug_start again, need to change strat
+        x = None
+        y = None
+        if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
+            x = env.x
+            y = env.y + 1
+        elif direction == 'e':
+            x = env.x + 1
+            y = env.y
+        elif direction == 's':
+            x = env.x
+            y = env.y - 1
+        elif direction == 'w':
+            x = env.x - 1
+            y = env.y
+        if env.rep[(x,y)] == ' ':
+            env.path = ['f','l']
+        else:
+            env.path = ['r']
 
     # if not pois and not env.path:
     #     # if no pois, go forward unless invalid in which case turn
@@ -201,6 +222,9 @@ class env_class:
         # agent loc
         self.x = 0
         self.y = 0
+
+        # border hug active
+        self.hug_start = None
 
     def pathfind(self, pos):
         # search towards pos from current xy
