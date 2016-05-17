@@ -119,7 +119,7 @@ def get_action(env):
         elif direction == 'w':
             x = env.x - 1
             y = env.y
-        if env.rep[(x,y)] == ' ':
+        if env.valid((x,y)):
             env.path = ['f','l']
         else:
             env.path = ['r']
@@ -390,7 +390,7 @@ class env_class:
         return [] # no path
 
 
-    def valid(self, pos, num_stones):
+    def valid(self, pos, num_stones = 0):
         if pos not in self.rep:
             return False # is this best way to do it?
         tile = self.rep[pos]
