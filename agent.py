@@ -80,7 +80,10 @@ def get_action(env):
     if not pois and not env.path:
         # if no pois, go forward unless invalid in which case turn
         # maybe try to avoid turning multiples times in a row since pointless :/
-        # maybe get it to go towards borders so sees more
+        # maybe get it to go towards borders so sees more. search edges?
+        # maybe hug borders, like always going left in maze. could result in loop tho. to solve, save pos when first hit border so if seen again, must be looping.
+        # maybe go to spots you havent been yet, since may increase vision
+        # goal is to increase vision so can find pois
         # also should favour forward movement over turning so more actual moving
         direction = env.compass.curr()
         rand1 = random.getrandbits(1)
