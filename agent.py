@@ -505,7 +505,7 @@ class env_class:
                     self.border_e = self.x + 2
                     for y in range(self.border_s, self.border_n + 1):
                         if (self.border_e, y) not in self.rep:
-                            self.rep[(self.border_e, y)]
+                            self.rep[(self.border_e, y)] = '?'
             elif direction == 's':
                 self.y -= 1
                 # bottom row is new
@@ -535,7 +535,7 @@ class env_class:
                     self.border_w = self.x - 2
                     for y in range(self.border_s, self.border_n + 1):
                         if (self.border_w, y) not in self.rep:
-                            self.rep[(self.border_w, y)]
+                            self.rep[(self.border_w, y)] = '?'
             self.on_poi()
         elif action == 'l':
             self.compass.left()
