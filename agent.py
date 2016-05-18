@@ -190,10 +190,12 @@ def get_action(env):
     # if fails, search for path w/ each other item
     # note required items and either search for them if not known or path to them if known
 
-    # may need to move naively since might take too long to search every possible path
-    # timer?
+    # map env by searching e.g. grid type search(?)
+    # grab pois if path (but not if path needs stone); if part of a path would be unknown, assume you can go through them.
+    # only use stones if necessary to get gold or to be able to search more (i.e. nowhere else to go unless use stone)
+    # remove any obstacles if possible
+    # when gold found, search for path
 
-    # add new env info to memory (but how big can envs get? might only be able to store parts; answer: 80 x 80 is max size, may start in any location)
     # search env for points of interest in priority order (priority queue; lists for each type of poi, append to appropriate list, then search lists in order of type by priority)
     # ^only search newly added bits?
     # search for path to appropriate pois
@@ -238,6 +240,9 @@ class env_class:
 
         # border hug active
         self.hug_start = None
+
+        # maybe store path tiles so know if a ? is updated to an obstacle, which means a path recalculation is required
+        # since otherwise may recalculate even when unnecessary
 
     def pathfind(self, pos):
         # search towards pos from current xy
