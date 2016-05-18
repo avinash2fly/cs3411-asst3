@@ -42,6 +42,8 @@ class compass_class:
         return self.directions[self.i]
 
 def get_action(env):
+    # returns an action from env.moves, setting it appropriately
+
     # action = raw_input('Action: ')
     # if action:
     #     env.moves = []
@@ -71,53 +73,50 @@ def get_action(env):
         #if path:
         #    env.moves = path
     
+    # create a poi list in priority order
     pois = []
     if env.gold:
         pois.append(env.gold)
+    tools = list(env.stone)
     if not env.has_key:
-        pois += list(env.key)
+        tools += list(env.key)
     if not env.has_axe:
-        pois += list(env.axe)
+        tools += list(env.axe)
     # dont go for stones if would use two to get
-    pois += sorted(pois + list(env.stone), key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
+    pois += sorted(tools, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     if env.has_key:
         pois += sorted(env.doors, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
     if env.has_axe:
         pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
-    # search if higher priority pois are found
-    # print('pois: '+str(pois))
+    # search for paths to each poi in priority order
     while pois:
-        # manually check i.e. check all pois of higher priority, or check if a path now has obstacles
-        # ^ still may take a long time? only check other pois if current path is bad or if gold so doesnt take ages searching on every stepk
-
-        # if no path or is new highest priority thing
-        # get list of pois in priority order i.e. gold first, then by dist?
-        print('env.path = ' + str(env.path))
+        # print('env.path = ' + str(env.path))
         pos = pois.pop(0)
-        print(pos)
+        # print(pos)
         if env.path and pos == env.path[-1]:
-            print('moo')
-            # no path to any poi of higher priority than current target
+            # this poi was the previous target and there were no paths to pois of higher priority
+            # check that the previous path is still valid
             valid = True
             for step in env.path:
-                print(step)
+                # print(step)
                 if not env.valid(step):
                     # print(str(step) + ' is invalid since its a "' + env.rep[step]+'"')
                     valid = False
                     break
             if valid:
-                print(env.path)
-                break # current path is still valid, just continue with it
+                # print(env.path)
+                break # previous path is still valid, just continue with it
             else:
+                # previous path is no longer valid so clear it
                 env.moves = []
                 env.path = []
-        if env.pathfind(pos): # put in pathfind?
-            break
+        if env.pathfind(pos):
+            break # a path has been found so use it
         # print('path: '+str(env.path))
 
-    if not env.moves: # use default behaviour
+    if not env.moves: # no paths to pois have been found, so use default behaviour
         # hug borders
         # bad strat for large empty space in middle
         # go forward and turn left
@@ -141,7 +140,6 @@ def get_action(env):
             return 'f'
         else:
             env.hug_start = (env.x,env.y)
-
     if env.hug_start and not env.moves:
         direction = env.compass.curr()
         # if reached hug_start again, need to change strat
@@ -164,12 +162,8 @@ def get_action(env):
         else:
             env.moves = ['r']
 
-    # else continue with prior path
-    print('env.moves:')
-    print(env.moves)
-    action = env.moves.pop(0)
-
-    return action # action must be a single char string
+    # print('env.moves:' + str(env.moves))
+    return env.moves.pop(0)
 
     # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
 
