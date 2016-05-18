@@ -121,6 +121,8 @@ def get_action(env):
             # must use tools
             print('No more to explore')
             return 'f'
+        # print(env.path)
+        # print(env.moves)
 
     # print('env.moves:' + str(env.moves))
     return env.moves.pop(0)
@@ -207,6 +209,7 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                path.reverse()
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
@@ -223,6 +226,7 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                path.reverse()
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
@@ -239,6 +243,7 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                path.reverse()
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
@@ -255,6 +260,7 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                path.reverse()
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
