@@ -92,8 +92,15 @@ def get_action(env):
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
         pos = pois.pop(0)
-        if env.moves and pos == env.moves[-1]:
-            break # everything else is lower priority
+        if env.path and pos == env.path[-1]:
+            # no path to any poi of higher priority than current target
+            valid = True
+            for step in env.path:
+                if not env.valid(env.rep[step]):
+                    valid = False
+                    break
+            if valid:
+                break # current path is still valid, just continue with it
         path = env.pathfind(pos) # put in pathfind?
         if path:
             env.moves = path
