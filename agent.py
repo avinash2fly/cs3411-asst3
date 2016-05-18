@@ -201,9 +201,9 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) == '?':
+            if (x,y) == '?' or y > self.border_n:
                 step = (x,y)
-                path = [step]
+                path = []
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
@@ -211,14 +211,15 @@ class env_class:
                 self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y)):
+                queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand e
             x = a + 1
             y = b
-            if (x,y) == '?':
+            if (x,y) == '?' or x > self.border_e:
                 step = (x,y)
-                path = [step]
+                path = []
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
@@ -226,14 +227,15 @@ class env_class:
                 self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y)):
+                queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand s
             x = a
             y = b - 1
-            if (x,y) == '?':
+            if (x,y) == '?' or y < self.border_s:
                 step = (x,y)
-                path = [step]
+                path = []
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
@@ -241,14 +243,15 @@ class env_class:
                 self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y)):
+                queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand w
             x = a - 1
             y = b
-            if (x,y) == '?':
+            if (x,y) == '?' or x < self.border_w:
                 step = (x,y)
-                path = [step]
+                path = []
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
@@ -256,6 +259,7 @@ class env_class:
                 self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y)):
+                queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
         return [] # no path
