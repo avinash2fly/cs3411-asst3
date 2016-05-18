@@ -58,17 +58,17 @@ def get_action(env):
         return env.moves.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
-    if env.gold:
+    #if env.gold:
         # first search with current tools
-        path = env.pathfind(env.gold)
+        #path = env.pathfind(env.gold)
         # if not path:
             # then figure out if stones required and how many
             # for i in range(0, 5):
             #     path = env.pathfind(env.gold, num_stones = i)
             #     if path:
             #         break
-        if path:
-            env.moves = path
+        #if path:
+        #    env.moves = path
     
     pois = []
     if not env.has_key:
@@ -84,7 +84,7 @@ def get_action(env):
         pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     # search if higher priority pois are found
-    while pois and env.new_poi:
+    while pois:
         # should remove new_poi variable
         # instead, manually check i.e. check all pois of higher priority, or check if a path now has obstacles
         # ^ still may take a long time? only check other pois if current path is bad or if gold so doesnt take ages searching on every stepk
@@ -96,6 +96,7 @@ def get_action(env):
             # no path to any poi of higher priority than current target
             valid = True
             for step in env.path:
+                print(step)
                 if not env.valid(env.rep[step]):
                     valid = False
                     break
