@@ -106,7 +106,7 @@ def get_action(env):
             env.moves = path
             break
 
-    if not pois and not env.moves:
+    if not env.moves: # use default behaviour
         # hug borders
         # bad strat for large empty space in middle
         # go forward and turn left
@@ -214,6 +214,7 @@ class env_class:
         self.num_stones = 0
         self.has_gold = False
 
+        self.path = []
         self.moves = []
         self.new_poi = False
 
@@ -235,8 +236,10 @@ class env_class:
             if path:
                 break
         path = [(self.x, self.y)] + path
+        self.path = path
         print(path)
         if len(path) == 1:
+            self.path = []
             return [] # no path
         compass = compass_class(self.compass.curr())
 
