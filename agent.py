@@ -47,11 +47,6 @@ def get_action(env):
     #     env.moves = []
     #     return action # for debugging
 
-    # new_poi essentially means needs to recalculate path
-    # maybe should be renamed
-    # maybe there should be an if not new_poi at beginning so only does
-    # rest if necessary
-
     if env.has_gold:
         if not env.moves:
             env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
@@ -94,8 +89,7 @@ def get_action(env):
     # search if higher priority pois are found
     # print('pois: '+str(pois))
     while pois:
-        # should remove new_poi variable
-        # instead, manually check i.e. check all pois of higher priority, or check if a path now has obstacles
+        # manually check i.e. check all pois of higher priority, or check if a path now has obstacles
         # ^ still may take a long time? only check other pois if current path is bad or if gold so doesnt take ages searching on every stepk
 
         # if no path or is new highest priority thing
@@ -170,8 +164,6 @@ def get_action(env):
         else:
             env.moves = ['r']
 
-    env.new_poi = False
-
     # else continue with prior path
     print('env.moves:')
     print(env.moves)
@@ -233,7 +225,6 @@ class env_class:
 
         self.path = []
         self.moves = []
-        self.new_poi = False
 
         # agent loc
         self.x = 0
@@ -428,22 +419,16 @@ class env_class:
     def check(self, pos):
         if self.rep[pos] == 'a' and pos not in self.axe:
             self.axe.add(pos)
-            self.new_poi = True
         elif self.rep[pos] == 'k' and pos not in self.key:
             self.key.add(pos)
-            self.new_poi = True
         elif self.rep[pos] == 'o' and pos not in self.stone:
             self.stone.add(pos)
-            self.new_poi = True
         elif self.rep[pos] == 'g'and self.gold != pos:
             self.gold = pos
-            self.new_poi = True
         elif self.rep[pos] == 'T' and pos not in self.trees:
             self.trees.add(pos)
-            self.new_poi = True
         elif self.rep[pos] == '-' and pos not in self.doors:
             self.doors.add(pos)
-            self.new_poi = True
 
     def on_poi(self):
         pos = (self.x, self.y)
@@ -486,7 +471,6 @@ class env_class:
                 # top row is new
                 for x in range(-2, 3):
                     if (self.x + x, self.y + 2) in self.rep and self.rep[(self.x + x, self.y + 2)] == '?' and view[(x,2)] != ' ':
-                        self.new_poi = True
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
                     self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
@@ -501,7 +485,6 @@ class env_class:
                 # right col is new
                 for x in range(-2, 3):
                     if (self.x + 2, self.y - x) in self.rep and self.rep[(self.x + 2, self.y - x)] == '?' and view[(x,2)] != ' ':
-                        self.new_poi = True
                     self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
                     self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
@@ -516,7 +499,6 @@ class env_class:
                 # bottom row is new
                 for x in range(-2, 3):
                     if (self.x - x, self.y - 2) in self.rep and self.rep[(self.x - x, self.y - 2)] == '?' and view[(x,2)] != ' ':
-                        self.new_poi = True
                     self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
                     self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
@@ -531,7 +513,6 @@ class env_class:
                 # left col is new
                 for x in range(-2, 3):
                     if (self.x - 2, self.y + x) in self.rep and self.rep[(self.x - 2, self.y + x)] == '?' and view[(x,2)] != ' ':
-                        self.new_poi = True
                     self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
                     self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
