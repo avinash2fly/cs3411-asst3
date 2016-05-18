@@ -57,7 +57,7 @@ def get_action(env):
             env.moves = env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
         else:
             for step in env.path: # maybe should make method to check if current path is traversable
-                if not env.valid(env.rep[step]):
+                if not env.valid(step):
                     env.moves = env.pathfind((0,0))
                     break
         return env.moves.pop(0)
@@ -76,6 +76,8 @@ def get_action(env):
         #    env.moves = path
     
     pois = []
+    if env.gold:
+        pois.append(env.gold)
     if not env.has_key:
         pois += list(env.key)
     if not env.has_axe:
@@ -89,6 +91,7 @@ def get_action(env):
         pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     # search if higher priority pois are found
+    # print('pois: '+str(pois))
     while pois:
         # should remove new_poi variable
         # instead, manually check i.e. check all pois of higher priority, or check if a path now has obstacles
@@ -97,16 +100,21 @@ def get_action(env):
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
         pos = pois.pop(0)
+        print('env.path: '+str(env.path))
         if env.path and pos == env.path[-1]:
             # no path to any poi of higher priority than current target
             valid = True
             for step in env.path:
                 print(step)
-                if not env.valid(env.rep[step]):
+                if not env.valid(step):
+                    # print(str(step) + ' is invalid since its a "' + env.rep[step]+'"')
                     valid = False
                     break
             if valid:
                 break # current path is still valid, just continue with it
+            else:
+                env.moves = []
+                env.path = []
         path = env.pathfind(pos) # put in pathfind?
         if path:
             env.moves = path
