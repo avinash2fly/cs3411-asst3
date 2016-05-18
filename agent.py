@@ -246,17 +246,12 @@ class env_class:
         # maybe store path tiles so know if a ? is updated to an obstacle, which means a path recalculation is required
         # since otherwise may recalculate even when unnecessary
 
-    def pathfind(self, pos):
+    def pathfind(self, pos, num_stones = 0):
         # search towards pos from current xy
-        path = []
-        for num_stones in range(0, self.num_stones + 1):
-            path = self.astar((self.x, self.y), pos, num_stones)
-            if path:
-                break
-        path = [(self.x, self.y)] + path
-        print(path)
-        if len(path) == 1:
+        path = self.astar((self.x, self.y), pos, num_stones)
+        if not path:
             return [] # no path
+        path = [(self.x, self.y)] + path
         self.path = path
         compass = compass_class(self.compass.curr())
 
