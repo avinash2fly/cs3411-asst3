@@ -54,7 +54,12 @@ def get_action(env):
 
     if env.has_gold:
         if not env.moves:
-            env.moves = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
+            env.moves = env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
+        else:
+            for step in env.path: # maybe should make method to check if current path is traversable
+                if not env.valid(env.rep[step]):
+                    env.moves = env.pathfind((0,0))
+                    break
         return env.moves.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
