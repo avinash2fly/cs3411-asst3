@@ -42,7 +42,6 @@ class compass_class:
         return self.directions[self.i]
 
 def get_action(env):
-    # action = 'f' # placeholder
     # action = raw_input('Action: ')
     # if action:
     #     env.path = []
@@ -86,6 +85,10 @@ def get_action(env):
 
     # search if higher priority pois are found
     while pois and env.new_poi:
+        # should remove new_poi variable
+        # instead, manually check i.e. check all pois of higher priority, or check if a path now has obstacles
+        # ^ still may take a long time? only check other pois if current path is bad or if gold so doesnt take ages searching on every stepk
+
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
         pos = pois.pop(0)
@@ -142,39 +145,6 @@ def get_action(env):
             env.path = ['f','l']
         else:
             env.path = ['r']
-
-    # if not pois and not env.path:
-    #     # if no pois, go forward unless invalid in which case turn
-    #     # maybe try to avoid turning multiples times in a row since pointless :/
-    #     # maybe get it to go towards borders so sees more. search edges?
-    #     # maybe hug borders, like always going left in maze. could result in loop tho. to solve, save pos when first hit border so if seen again, must be looping.
-    #     # maybe go to spots you havent been yet, since may increase vision
-    #     # goal is to increase vision so can find pois
-    #     # also should favour forward movement over turning so more actual moving
-    #     direction = env.compass.curr()
-    #     rand1 = random.getrandbits(1)
-    #     rand2 = random.getrandbits(1)
-    #     turns = ['l','r']
-        # if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-        #     if rand1 and env.rep[(env.x, env.y + 1)] == ' ':
-        #         return 'f'
-        #     else:
-        #         return turns[rand2]
-        # elif direction == 'e':
-        #     if rand1 and env.rep[(env.x + 1, env.y)] == ' ':
-        #         return 'f'
-        #     else:
-        #         return turns[rand2]
-        # elif direction == 's':
-        #     if rand1 and env.rep[(env.x, env.y - 1)] == ' ':
-        #         return 'f'
-        #     else:
-        #         return turns[rand2]
-        # elif direction == 'w':
-        #     if rand1 and env.rep[(env.x - 1, env.y)] == ' ':
-        #         return 'f'
-        #     else:
-        #         return turns[rand2]
 
     env.new_poi = False
 
