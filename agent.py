@@ -117,50 +117,8 @@ def get_action(env):
         # print('path: '+str(env.path))
 
     if not env.moves: # no paths to pois have been found, so use default behaviour
-        # hug borders
-        # bad strat for large empty space in middle
-        # go forward and turn left
-        # if cant go forward, turn right until can go forward then go forward and turn left
-        direction = env.compass.curr()
-        x = None
-        y = None
-        if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-            x = env.x
-            y = env.y + 1
-        elif direction == 'e':
-            x = env.x + 1
-            y = env.y
-        elif direction == 's':
-            x = env.x
-            y = env.y - 1
-        elif direction == 'w':
-            x = env.x - 1
-            y = env.y
-        if env.valid((x,y)) and not env.hug_start:
-            return 'f'
-        else:
-            env.hug_start = (env.x,env.y)
-    if env.hug_start and not env.moves:
-        direction = env.compass.curr()
-        # if reached hug_start again, need to change strat
-        x = None
-        y = None
-        if direction == 'n': # # maybe should have a function to return adjacent pos given a pos and direction?
-            x = env.x
-            y = env.y + 1
-        elif direction == 'e':
-            x = env.x + 1
-            y = env.y
-        elif direction == 's':
-            x = env.x
-            y = env.y - 1
-        elif direction == 'w':
-            x = env.x - 1
-            y = env.y
-        if env.valid((x,y)):
-            env.moves = ['f','l']
-        else:
-            env.moves = ['r']
+        if not env.explore():
+            # must use tools
 
     # print('env.moves:' + str(env.moves))
     return env.moves.pop(0)
@@ -229,6 +187,68 @@ class env_class:
 
         # maybe store path tiles so know if a ? is updated to an obstacle, which means a path recalculation is required
         # since otherwise may recalculate even when unnecessary
+
+    def explore(self):
+        seen = {}
+        queue = [(self.x, self.y)]
+        while len(queue) > 0:
+            # pop queue
+            pos = queue.pop(0)
+            a, b = pos
+            
+            # expand n
+            x = a
+            y = b + 1
+            if (x,y) == '?':
+                step = (x,y)
+                path = [step]
+                while step != (self.x,self.y):
+                    step = seen[step]
+                    path.append(step)
+                return path
+            elif (x,y) not in seen and self.valid((x,y), num_stones):
+                seen[(x,y)] = (a,b)
+
+            # expand e
+            x = a + 1
+            y = b
+            if (x,y) == '?':
+                step = (x,y)
+                path = [step]
+                while step != (self.x,self.y):
+                    step = seen[step]
+                    path.append(step)
+                return path
+            elif (x,y) not in seen and self.valid((x,y), num_stones):
+                seen[(x,y)] = (a,b)
+
+            # expand s
+            x = a
+            y = b - 1
+            if (x,y) == '?':
+                step = (x,y)
+                path = [step]
+                while step != (self.x,self.y):
+                    step = seen[step]
+                    path.append(step)
+                return path
+            elif (x,y) not in seen and self.valid((x,y), num_stones):
+                seen[(x,y)] = (a,b)
+
+            # expand w
+            x = a - 1
+            y = b
+            if (x,y) == '?':
+                step = (x,y)
+                path = [step]
+                while step != (self.x,self.y):
+                    step = seen[step]
+                    path.append(step)
+                return path
+            elif (x,y) not in seen and self.valid((x,y), num_stones):
+                seen[(x,y)] = (a,b)
+
+        return [] # no path
 
     def pathfind(self, pos, num_stones = 0):
         # find a path from current position to pos
@@ -317,11 +337,6 @@ class env_class:
         return True
 
     def astar(self, start, end, num_stones):
-
-        # astar search may be less useful since no weights, every node is equal distance to neighbours
-
-        # prev is previous pos
-        # cost cost to get to pos for each pos in a tuple dict
         c, d = end
 
         # seen set ensures positions are only checked once, with the shortest prev path
