@@ -363,7 +363,6 @@ class env_class:
         # repeat
 
         while len(queue) > 0:
-
             # pop queue
             _ , pos, path, num_stones = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
@@ -382,7 +381,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
-                seen.add(pos) # means that if tried later i.e. by something with higher prior cost, is skipped
+                seen.add((x,y)) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
             x = a + 1
@@ -391,7 +390,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
-                seen.add(pos)
+                seen.add((x,y))
 
             # expand s
             x = a
@@ -400,7 +399,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
-                seen.add(pos)
+                seen.add((x,y))
 
             # expand w
             x = a - 1
@@ -409,7 +408,7 @@ class env_class:
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
-                seen.add(pos)
+                seen.add((x,y))
 
         return [] # no path
 
