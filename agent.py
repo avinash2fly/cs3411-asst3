@@ -99,9 +99,11 @@ def get_action(env):
 
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
+        print('env.path = ' + str(env.path))
         pos = pois.pop(0)
-        print('env.path: '+str(env.path))
+        print(pos)
         if env.path and pos == env.path[-1]:
+            print('moo')
             # no path to any poi of higher priority than current target
             valid = True
             for step in env.path:
@@ -111,11 +113,13 @@ def get_action(env):
                     valid = False
                     break
             if valid:
+                print(env.path)
                 break # current path is still valid, just continue with it
             else:
                 env.moves = []
                 env.path = []
         path = env.pathfind(pos) # put in pathfind?
+        print('path: '+str(env.path))
         if path:
             env.moves = path
             break
@@ -250,11 +254,10 @@ class env_class:
             if path:
                 break
         path = [(self.x, self.y)] + path
-        self.path = path
         print(path)
         if len(path) == 1:
-            self.path = []
             return [] # no path
+        self.path = path
         compass = compass_class(self.compass.curr())
 
         # convert path to sequence of moves
