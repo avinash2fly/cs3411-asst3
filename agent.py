@@ -84,7 +84,7 @@ def get_action(env):
     if env.has_axe:
         pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
-    while pois and (not env.path or env.new_poi):
+    while pois and (not env.path and env.new_poi):
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
         pos = pois.pop(0)
