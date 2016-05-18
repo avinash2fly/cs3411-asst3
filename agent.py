@@ -44,7 +44,7 @@ class compass_class:
 def get_action(env):
     # action = raw_input('Action: ')
     # if action:
-    #     env.path = []
+    #     env.moves = []
     #     return action # for debugging
 
     # new_poi essentially means needs to recalculate path
@@ -53,9 +53,9 @@ def get_action(env):
     # rest if necessary
 
     if env.has_gold:
-        if not env.path:
-            env.path = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
-        return env.path.pop(0)
+        if not env.moves:
+            env.moves = env.pathfind((0,0)) # cant fail since must have been able to come from it originally
+        return env.moves.pop(0)
 
     # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
     if env.gold:
@@ -68,7 +68,7 @@ def get_action(env):
             #     if path:
             #         break
         if path:
-            env.path = path
+            env.moves = path
     
     pois = []
     if not env.has_key:
@@ -92,14 +92,14 @@ def get_action(env):
         # if no path or is new highest priority thing
         # get list of pois in priority order i.e. gold first, then by dist?
         pos = pois.pop(0)
-        if env.path and pos == env.path[-1]:
+        if env.moves and pos == env.moves[-1]:
             break # everything else is lower priority
         path = env.pathfind(pos) # put in pathfind?
         if path:
-            env.path = path
+            env.moves = path
             break
 
-    if not pois and not env.path:
+    if not pois and not env.moves:
         # hug borders
         # bad strat for large empty space in middle
         # go forward and turn left
@@ -124,7 +124,7 @@ def get_action(env):
         else:
             env.hug_start = (env.x,env.y)
 
-    if env.hug_start and not env.path:
+    if env.hug_start and not env.moves:
         direction = env.compass.curr()
         # if reached hug_start again, need to change strat
         x = None
@@ -142,16 +142,16 @@ def get_action(env):
             x = env.x - 1
             y = env.y
         if env.valid((x,y)):
-            env.path = ['f','l']
+            env.moves = ['f','l']
         else:
-            env.path = ['r']
+            env.moves = ['r']
 
     env.new_poi = False
 
     # else continue with prior path
-    print('env.path:')
-    print(env.path)
-    action = env.path.pop(0)
+    print('env.moves:')
+    print(env.moves)
+    action = env.moves.pop(0)
 
     return action # action must be a single char string
 
@@ -207,7 +207,7 @@ class env_class:
         self.num_stones = 0
         self.has_gold = False
 
-        self.path = []
+        self.moves = []
         self.new_poi = False
 
         # agent loc
