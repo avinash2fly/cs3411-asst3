@@ -54,11 +54,12 @@ def get_action(env):
 
     if env.has_gold:
         if not env.moves:
-            env.moves = env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
+            env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
         else:
+            # check current path is still valid
             for step in env.path: # maybe should make method to check if current path is traversable
                 if not env.valid(step):
-                    env.moves = env.pathfind((0,0))
+                    env.pathfind((0,0))
                     break
         return env.moves.pop(0)
 
@@ -118,11 +119,9 @@ def get_action(env):
             else:
                 env.moves = []
                 env.path = []
-        path = env.pathfind(pos) # put in pathfind?
-        print('path: '+str(env.path))
-        if path:
-            env.moves = path
+        if env.pathfind(pos): # put in pathfind?
             break
+        # print('path: '+str(env.path))
 
     if not env.moves: # use default behaviour
         # hug borders
@@ -247,10 +246,12 @@ class env_class:
         # since otherwise may recalculate even when unnecessary
 
     def pathfind(self, pos, num_stones = 0):
-        # search towards pos from current xy
+        # find a path from current position to pos
+        # if found, store path and moves and return True
+        # else return False
         path = self.astar((self.x, self.y), pos, num_stones)
         if not path:
-            return [] # no path
+            return False # no path
         path = [(self.x, self.y)] + path
         self.path = path
         compass = compass_class(self.compass.curr())
@@ -326,7 +327,9 @@ class env_class:
             elif self.rep[next_tile] == 'T' and self.has_axe:
                 moves.append('c')
             moves.append('f')
-        return moves
+        self.path = path
+        self.moves = moves
+        return True
 
     def astar(self, start, end, num_stones):
 
