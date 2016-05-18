@@ -119,6 +119,8 @@ def get_action(env):
     if not env.moves: # no paths to pois have been found, so use default behaviour
         if not env.explore():
             # must use tools
+            print('No more to explore')
+            return 'f'
 
     # print('env.moves:' + str(env.moves))
     return env.moves.pop(0)
@@ -208,7 +210,7 @@ class env_class:
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
-            elif (x,y) not in seen and self.valid((x,y), num_stones):
+            elif (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
 
             # expand e
@@ -223,7 +225,7 @@ class env_class:
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
-            elif (x,y) not in seen and self.valid((x,y), num_stones):
+            elif (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
 
             # expand s
@@ -238,7 +240,7 @@ class env_class:
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
-            elif (x,y) not in seen and self.valid((x,y), num_stones):
+            elif (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
 
             # expand w
@@ -253,7 +255,7 @@ class env_class:
                 self.path = path
                 self.moves = self.get_moves(path)
                 return path
-            elif (x,y) not in seen and self.valid((x,y), num_stones):
+            elif (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
 
         return [] # no path
@@ -488,7 +490,6 @@ class env_class:
                 self.y += 1
                 # top row is new
                 for x in range(-2, 3):
-                    if (self.x + x, self.y + 2) in self.rep and self.rep[(self.x + x, self.y + 2)] == '?' and view[(x,2)] != ' ':
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
                     self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
@@ -502,7 +503,6 @@ class env_class:
                 self.x += 1
                 # right col is new
                 for x in range(-2, 3):
-                    if (self.x + 2, self.y - x) in self.rep and self.rep[(self.x + 2, self.y - x)] == '?' and view[(x,2)] != ' ':
                     self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
                     self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
@@ -516,7 +516,6 @@ class env_class:
                 self.y -= 1
                 # bottom row is new
                 for x in range(-2, 3):
-                    if (self.x - x, self.y - 2) in self.rep and self.rep[(self.x - x, self.y - 2)] == '?' and view[(x,2)] != ' ':
                     self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
                     self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
@@ -530,7 +529,6 @@ class env_class:
                 self.x -= 1
                 # left col is new
                 for x in range(-2, 3):
-                    if (self.x - 2, self.y + x) in self.rep and self.rep[(self.x - 2, self.y + x)] == '?' and view[(x,2)] != ' ':
                     self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
                     self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
