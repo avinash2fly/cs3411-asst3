@@ -205,6 +205,8 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                self.path = path
+                self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y), num_stones):
                 seen[(x,y)] = (a,b)
@@ -218,6 +220,8 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                self.path = path
+                self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y), num_stones):
                 seen[(x,y)] = (a,b)
@@ -231,6 +235,8 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                self.path = path
+                self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y), num_stones):
                 seen[(x,y)] = (a,b)
@@ -244,6 +250,8 @@ class env_class:
                 while step != (self.x,self.y):
                     step = seen[step]
                     path.append(step)
+                self.path = path
+                self.moves = self.get_moves(path)
                 return path
             elif (x,y) not in seen and self.valid((x,y), num_stones):
                 seen[(x,y)] = (a,b)
