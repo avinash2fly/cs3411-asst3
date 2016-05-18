@@ -203,7 +203,7 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) == '?' or y > self.border_n:
+            if y > self.border_n or self.rep[(x,y)] == '?':
                 step = pos
                 path = [step]
                 while step != (self.x,self.y):
@@ -220,7 +220,7 @@ class env_class:
             # expand e
             x = a + 1
             y = b
-            if (x,y) == '?' or x > self.border_e:
+            if x > self.border_e or self.rep[(x,y)] == '?':
                 step = pos
                 path = [step]
                 while step != (self.x,self.y):
@@ -237,7 +237,7 @@ class env_class:
             # expand s
             x = a
             y = b - 1
-            if (x,y) == '?' or y < self.border_s:
+            if y < self.border_s or self.rep[(x,y)] == '?':
                 step = pos
                 path = [step]
                 while step != (self.x,self.y):
@@ -254,7 +254,7 @@ class env_class:
             # expand w
             x = a - 1
             y = b
-            if (x,y) == '?' or x < self.border_w:
+            if x < self.border_w or  self.rep[(x,y)] == '?':
                 step = pos
                 path = [step]
                 while step != (self.x,self.y):
