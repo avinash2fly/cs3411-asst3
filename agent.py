@@ -259,10 +259,13 @@ class env_class:
             return False # no path
         path = [(self.x, self.y)] + path
         self.path = path
-        compass = compass_class(self.compass.curr())
+        self.moves = self.get_moves(path)
+        return True
 
+    def get_moves(self, path):
         # convert path to sequence of moves
         moves = []
+        compass = compass_class(self.compass.curr())
         for i, curr_tile in enumerate(path):
             if i + 1 >= len(path):
                 break # end of path
@@ -326,15 +329,13 @@ class env_class:
             else:
                 # bad path
                 print('Bad path')
-                return []
+                return False
             if self.rep[next_tile] == '-' and self.has_key:
                 moves.append('u')
             elif self.rep[next_tile] == 'T' and self.has_axe:
                 moves.append('c')
             moves.append('f')
-        self.path = path
-        self.moves = moves
-        return True
+        return moves
 
     def astar(self, start, end, num_stones):
         c, d = end
