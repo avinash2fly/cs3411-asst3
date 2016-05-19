@@ -207,7 +207,7 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) not in seen:
+            if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3): # since everything else would have been checked when (a,b) was
                     if (x1,y+2) not in self.rep or self.rep[(x1,y+2)] == '?':
@@ -222,13 +222,12 @@ class env_class:
                         print((x,y))
                         print((x1,y+2))
                         return path
-                if self.valid((x,y)):
-                    queue.append((x,y))
+                queue.append((x,y))
 
             # expand e
             x = a + 1
             y = b
-            if (x,y) not in seen:
+            if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
                     if (x+2, y1) not in self.rep or self.rep[(x+2,y1)] == '?':
@@ -243,13 +242,12 @@ class env_class:
                         print((x,y))
                         print((x+2,y1))
                         return path
-                if self.valid((x,y)):
-                    queue.append((x,y))
+                queue.append((x,y))
 
             # expand s
             x = a
             y = b - 1
-            if (x,y) not in seen:
+            if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3):
                     if (x1, y-2) not in self.rep or self.rep[(x1,y-2)] == '?':
@@ -264,13 +262,12 @@ class env_class:
                         print((x,y))
                         print((x1,y-2))
                         return path
-                if self.valid((x,y)):
-                    queue.append((x,y))
+                queue.append((x,y))
 
             # expand w
             x = a - 1
             y = b
-            if (x,y) not in seen:
+            if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
                     if (x-2, y1) not in self.rep or self.rep[(x-2,y1)] == '?':
@@ -285,8 +282,7 @@ class env_class:
                         print((x,y))
                         print((x-2,y1))
                         return path
-                if self.valid((x,y)):
-                    queue.append((x,y))
+                queue.append((x,y))
 
         return [] # no path
 
