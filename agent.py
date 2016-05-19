@@ -72,49 +72,7 @@ def get_action(env):
             #         break
         #if path:
         #    env.moves = path
-    
-    # create a poi list in priority order
-    pois = []
-    if env.gold:
-        pois.append(env.gold)
-    tools = list(env.stone)
-    if not env.has_key:
-        tools += list(env.key)
-    if not env.has_axe:
-        tools += list(env.axe)
-    # dont go for stones if would use two to get
-    pois += sorted(tools, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
-
-    if env.has_key:
-        pois += sorted(env.doors, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
-    # if env.has_axe:
-    #     pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
-
-    # search for paths to each poi in priority order
-    while pois:
-        # print('env.path = ' + str(env.path))
-        pos = pois.pop(0)
-        # print(pos)
-        if env.path and pos == env.path[-1]:
-            # this poi was the previous target and there were no paths to pois of higher priority
-            # check that the previous path is still valid
-            valid = True
-            for step in env.path:
-                # print(step)
-                if not env.valid(step):
-                    # print(str(step) + ' is invalid since its a "' + env.rep[step]+'"')
-                    valid = False
-                    break
-            if valid:
-                # print(env.path)
-                break # previous path is still valid, just continue with it
-            else:
-                # previous path is no longer valid so clear it
-                env.moves = []
-                env.path = []
-        if env.pathfind(pos):
-            break # a path has been found so use it
-        # print('path: '+str(env.path))
+    env.check_pois()
 
     if not env.moves: # no paths to pois have been found, so use default behaviour
         explore = env.explore()
@@ -198,6 +156,50 @@ class env_class:
         # agent loc
         self.x = 0
         self.y = 0
+
+    def check_pois(self):
+        # create a poi list in priority order
+        pois = []
+        if self.gold:
+            pois.append(self.gold)
+        tools = list(self.stone)
+        if not self.has_key:
+            tools += list(self.key)
+        if not self.has_axe:
+            tools += list(self.axe)
+        # dont go for stones if would use two to get
+        pois += sorted(tools, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
+
+        if self.has_key:
+            pois += sorted(self.doors, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
+        # if self.has_axe:
+        #     pois += sorted(self.trees, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
+
+        # search for paths to each poi in priority order
+        while pois:
+            # print('self.path = ' + str(self.path))
+            pos = pois.pop(0)
+            # print(pos)
+            if self.path and pos == self.path[-1]:
+                # this poi was the previous target and there were no paths to pois of higher priority
+                # check that the previous path is still valid
+                valid = True
+                for step in self.path:
+                    # print(step)
+                    if not self.valid(step):
+                        # print(str(step) + ' is invalid since its a "' + self.rep[step]+'"')
+                        valid = False
+                        break
+                if valid:
+                    # print(self.path)
+                    break # previous path is still valid, just continue with it
+                else:
+                    # previous path is no longer valid so clear it
+                    self.moves = []
+                    self.path = []
+            if self.pathfind(pos):
+                break # a path has been found so use it
+            # print('path: '+str(self.path))
 
     def explore(self):
         seen = {}
