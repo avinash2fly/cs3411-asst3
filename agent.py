@@ -123,11 +123,14 @@ def get_action(env):
             # must use tools
             print('No more to explore')
             return 'f'
-        # print(env.path)
-        # print(env.moves)
+    print(env.path)
+    print(env.moves)
 
     # print('env.moves:' + str(env.moves))
-    return env.moves.pop(0)
+    action = env.moves.pop(0)
+    if action == 'f':
+        env.path.pop(0)
+    return action
 
     # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
 
