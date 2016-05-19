@@ -305,16 +305,6 @@ class env_class:
 
         return [] # no path
 
-    def pathfind(self, pos, num_stones = 0):
-        # find a path from current position to pos
-        # if found, store path and moves and return True
-        # else return False
-        path = self.astar((self.x, self.y), pos, num_stones)
-        if not path:
-            return [] # no path
-        path = [(self.x, self.y)] + path
-        return path
-
     def get_moves(self, path):
         # convert path to sequence of moves
         moves = []
@@ -390,8 +380,9 @@ class env_class:
             moves.append('f')
         return moves
 
-    def astar(self, start, end, num_stones):
-        c, d = end
+    def pathfind(self, target, num_stones):
+        c, d = target
+        start = (self.x, self.y)
 
         # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
@@ -417,8 +408,8 @@ class env_class:
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
 
-            if pos == end:
-                return path
+            if pos == target:
+                return [start] + path
 
             prev = len(path)
             a, b = pos
