@@ -87,8 +87,8 @@ def get_action(env):
 
     if env.has_key:
         pois += sorted(env.doors, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
-    if env.has_axe:
-        pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
+    # if env.has_axe:
+    #     pois += sorted(env.trees, key = lambda pos: abs(pos[0] - env.x) + abs(pos[1] - env.y))
 
     # search for paths to each poi in priority order
     while pois:
