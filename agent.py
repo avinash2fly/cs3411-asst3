@@ -380,7 +380,7 @@ class env_class:
             moves.append('f')
         return moves
 
-    def pathfind(self, target, num_stones):
+    def pathfind(self, target, num_stones = 0):
         c, d = target
         start = (self.x, self.y)
 
