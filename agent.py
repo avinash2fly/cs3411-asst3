@@ -446,7 +446,6 @@ class env_class:
 
         return [] # no path
 
-
     def valid(self, pos, num_stones = 0):
         if pos not in self.rep:
             return False # out of borders
@@ -479,25 +478,27 @@ class env_class:
             self.doors.add(pos)
 
     def on_poi(self):
-        pos = (self.x, self.y)
-        if self.rep[pos] == 'a':
+        curr = self.rep[(self.x, self.y)]
+        if curr == 'a':
             self.axe.remove(pos)
             self.has_axe = True
-        elif self.rep[pos] == 'k':
+        elif curr == 'k':
             self.key.remove(pos)
             self.has_key = True
-        elif self.rep[pos] == 'o':
+        elif curr == 'o':
             self.stone.remove(pos)
             self.num_stones += 1
-        elif self.rep[pos] == 'g':
+        elif curr == 'g':
             self.gold = False
             self.has_gold = True
-        elif self.rep[pos] == '~':
+        elif curr == '~':
             # place stone
-            self.rep[pos] = 'O'
+            self.rep[(self.x, self.y)] = 'O'
             self.num_stones -= 1
             # if self.num_stones < 0:
             #     ded
+        elif curr == '*' or curr == 'T' or curr == '-':
+            raise RuntimeError("I'm inside an obstacle!")
 
     def update(self, view, action):
         direction = self.compass.curr()
@@ -516,6 +517,10 @@ class env_class:
             # need to deal with increasing borders
             if direction == 'n':
                 self.y += 1
+                curr = self.rep[(self.x, self.y)]
+                if curr == '*' or curr == 'T' or curr == '-':
+                    self.y -= 1
+                    return # tried to walk into a wall, nothing happened
                 # top row is new
                 for x in range(-2, 3):
                     self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
@@ -529,6 +534,10 @@ class env_class:
                             self.rep[(x, self.border_n)] = '?'
             elif direction == 'e':
                 self.x += 1
+                curr = self.rep[(self.x, self.y)]
+                if curr == '*' or curr == 'T' or curr == '-':
+                    self.x -= 1
+                    return # tried to walk into a wall, nothing happened
                 # right col is new
                 for x in range(-2, 3):
                     self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
@@ -542,6 +551,10 @@ class env_class:
                             self.rep[(self.border_e, y)] = '?'
             elif direction == 's':
                 self.y -= 1
+                curr = self.rep[(self.x, self.y)]
+                if curr == '*' or curr == 'T' or curr == '-':
+                    self.y += 1
+                    return # tried to walk into a wall, nothing happened
                 # bottom row is new
                 for x in range(-2, 3):
                     self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
@@ -555,6 +568,10 @@ class env_class:
                             self.rep[(x, self.border_s)] = '?'
             elif direction == 'w':
                 self.x -= 1
+                curr = self.rep[(self.x, self.y)]
+                if curr == '*' or curr == 'T' or curr == '-':
+                    self.x += 1
+                    return # tried to walk into a wall, nothing happened
                 # left col is new
                 for x in range(-2, 3):
                     self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
