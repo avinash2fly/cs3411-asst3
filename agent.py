@@ -122,7 +122,9 @@ def get_action(env):
         if not explore:
             # must use tools
             print('No more to explore')
-            return 'f'
+            env.use_stones = True
+            return raw_input('Action: ')
+            # return 'f'
     print(env.path)
     print(env.moves)
 
@@ -188,18 +190,14 @@ class env_class:
         self.num_stones = 0
         self.has_gold = False
 
+        self.use_stones = False
+
         self.path = []
         self.moves = []
 
         # agent loc
         self.x = 0
         self.y = 0
-
-        # border hug active
-        self.hug_start = None
-
-        # maybe store path tiles so know if a ? is updated to an obstacle, which means a path recalculation is required
-        # since otherwise may recalculate even when unnecessary
 
     def explore(self):
         seen = {}
