@@ -205,9 +205,9 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            for x1 in range(x-2,x+3):
-                for y1 in range(y-2,y+3):
-                    if (x1, y1) not in self.rep or self.rep[(x,y)] == '?':
+            if (x,y) not in seen:
+                for x1 in range(x-2,x+3): # since everything else would have been checked when (a,b) was
+                    if (x1,y+2) not in self.rep or self.rep[(x1,y+2)] == '?':
                         step = pos
                         path = [step]
                         while step != (self.x,self.y):
@@ -217,16 +217,16 @@ class env_class:
                         self.path = path
                         self.moves = self.get_moves(path)
                         return path
-            if (x,y) not in seen and self.valid((x,y)):
-                queue.append((x,y))
+                if self.valid((x,y)):
+                    queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand e
             x = a + 1
             y = b
-            for x1 in range(x-2,x+3):
+            if (x,y) not in seen:
                 for y1 in range(y-2,y+3):
-                    if (x1, y1) not in self.rep or self.rep[(x,y)] == '?':
+                    if (x+2, y1) not in self.rep or self.rep[(x+2,y1)] == '?':
                         step = pos
                         path = [step]
                         while step != (self.x,self.y):
@@ -236,16 +236,16 @@ class env_class:
                         self.path = path
                         self.moves = self.get_moves(path)
                         return path
-            if (x,y) not in seen and self.valid((x,y)):
-                queue.append((x,y))
+                if self.valid((x,y)):
+                    queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand s
             x = a
             y = b - 1
-            for x1 in range(x-2,x+3):
-                for y1 in range(y-2,y+3):
-                    if (x1, y1) not in self.rep or self.rep[(x,y)] == '?':
+            if (x,y) not in seen:
+                for x1 in range(x-2,x+3):
+                    if (x1, y-2) not in self.rep or self.rep[(x1,y-2)] == '?':
                         step = pos
                         path = [step]
                         while step != (self.x,self.y):
@@ -255,16 +255,16 @@ class env_class:
                         self.path = path
                         self.moves = self.get_moves(path)
                         return path
-            if (x,y) not in seen and self.valid((x,y)):
-                queue.append((x,y))
+                if self.valid((x,y)):
+                    queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
             # expand w
             x = a - 1
             y = b
-            for x1 in range(x-2,x+3):
+            if (x,y) not in seen:
                 for y1 in range(y-2,y+3):
-                    if (x1, y1) not in self.rep or self.rep[(x,y)] == '?':
+                    if (x-2, y1) not in self.rep or self.rep[(x-2,y1)] == '?':
                         step = pos
                         path = [step]
                         while step != (self.x,self.y):
@@ -274,8 +274,8 @@ class env_class:
                         self.path = path
                         self.moves = self.get_moves(path)
                         return path
-            if (x,y) not in seen and self.valid((x,y)):
-                queue.append((x,y))
+                if self.valid((x,y)):
+                    queue.append((x,y))
                 seen[(x,y)] = (a,b)
 
         return [] # no path
