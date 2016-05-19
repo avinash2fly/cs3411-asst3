@@ -77,9 +77,11 @@ def get_action(env):
     env.check_pois(0 if not env.use_stones else env.num_stones)
 
     if not env.moves: # no paths to pois have been found, so use default behaviour
-        explore = env.explore()
-        print(explore)
-        if not explore:
+        path = env.explore()
+        print(path)
+        if path:
+            env.set_path(path)
+        else:
             # must use tools
             print('No more to explore')
             env.use_stones = True
@@ -236,8 +238,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        self.path = path
-                        self.moves = self.get_moves(path)
                         print((x,y))
                         print((x1,y+2))
                         return path
@@ -256,8 +256,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        self.path = path
-                        self.moves = self.get_moves(path)
                         print((x,y))
                         print((x+2,y1))
                         return path
@@ -276,8 +274,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        self.path = path
-                        self.moves = self.get_moves(path)
                         print((x,y))
                         print((x1,y-2))
                         return path
@@ -296,8 +292,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        self.path = path
-                        self.moves = self.get_moves(path)
                         print((x,y))
                         print((x-2,y1))
                         return path
