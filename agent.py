@@ -164,6 +164,10 @@ class env_class:
         self.path = path
         self.moves = self.get_moves(path)
 
+    def clear_path(self):
+        self.path = []
+        self.moves = []
+
     def check_pois(self, num_stones = 0):
         # create a poi list in priority order
         pois = []
@@ -202,8 +206,7 @@ class env_class:
                     break # previous path is still valid, just continue with it
                 else:
                     # previous path is no longer valid so clear it
-                    self.moves = []
-                    self.path = []
+                    self.clear_path()
             path = self.pathfind(pos, num_stones)
             if path:
                 self.set_path(path)
