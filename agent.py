@@ -117,7 +117,9 @@ def get_action(env):
         # print('path: '+str(env.path))
 
     if not env.moves: # no paths to pois have been found, so use default behaviour
-        if not env.explore():
+        explore = env.explore()
+        print(explore)
+        if not explore:
             # must use tools
             print('No more to explore')
             return 'f'
@@ -206,9 +208,10 @@ class env_class:
             x = a
             y = b + 1
             if (x,y) not in seen:
+                seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3): # since everything else would have been checked when (a,b) was
                     if (x1,y+2) not in self.rep or self.rep[(x1,y+2)] == '?':
-                        step = pos
+                        step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
                             step = seen[step]
@@ -216,18 +219,20 @@ class env_class:
                         path.reverse()
                         self.path = path
                         self.moves = self.get_moves(path)
+                        print((x,y))
+                        print((x1,y+2))
                         return path
                 if self.valid((x,y)):
                     queue.append((x,y))
-                seen[(x,y)] = (a,b)
 
             # expand e
             x = a + 1
             y = b
             if (x,y) not in seen:
+                seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
                     if (x+2, y1) not in self.rep or self.rep[(x+2,y1)] == '?':
-                        step = pos
+                        step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
                             step = seen[step]
@@ -235,18 +240,20 @@ class env_class:
                         path.reverse()
                         self.path = path
                         self.moves = self.get_moves(path)
+                        print((x,y))
+                        print((x+2,y1))
                         return path
                 if self.valid((x,y)):
                     queue.append((x,y))
-                seen[(x,y)] = (a,b)
 
             # expand s
             x = a
             y = b - 1
             if (x,y) not in seen:
+                seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3):
                     if (x1, y-2) not in self.rep or self.rep[(x1,y-2)] == '?':
-                        step = pos
+                        step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
                             step = seen[step]
@@ -254,18 +261,20 @@ class env_class:
                         path.reverse()
                         self.path = path
                         self.moves = self.get_moves(path)
+                        print((x,y))
+                        print((x1,y-2))
                         return path
                 if self.valid((x,y)):
                     queue.append((x,y))
-                seen[(x,y)] = (a,b)
 
             # expand w
             x = a - 1
             y = b
             if (x,y) not in seen:
+                seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
                     if (x-2, y1) not in self.rep or self.rep[(x-2,y1)] == '?':
-                        step = pos
+                        step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
                             step = seen[step]
@@ -273,10 +282,11 @@ class env_class:
                         path.reverse()
                         self.path = path
                         self.moves = self.get_moves(path)
+                        print((x,y))
+                        print((x-2,y1))
                         return path
                 if self.valid((x,y)):
                     queue.append((x,y))
-                seen[(x,y)] = (a,b)
 
         return [] # no path
 
