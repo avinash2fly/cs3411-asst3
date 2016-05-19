@@ -72,7 +72,7 @@ def get_action(env):
             #         break
         #if path:
         #    env.moves = path
-    env.check_pois()
+    env.check_pois(0 if not env.use_stones else env.num_stones)
 
     if not env.moves: # no paths to pois have been found, so use default behaviour
         explore = env.explore()
@@ -81,7 +81,8 @@ def get_action(env):
             # must use tools
             print('No more to explore')
             env.use_stones = True
-            return raw_input('Action: ')
+            env.check_pois(env.num_stones)
+            # return raw_input('Action: ')
             # return 'f'
     print(env.path)
     print(env.moves)
@@ -157,7 +158,7 @@ class env_class:
         self.x = 0
         self.y = 0
 
-    def check_pois(self):
+    def check_pois(self, num_stones = 0):
         # create a poi list in priority order
         pois = []
         if self.gold:
@@ -197,7 +198,7 @@ class env_class:
                     # previous path is no longer valid so clear it
                     self.moves = []
                     self.path = []
-            if self.pathfind(pos):
+            if self.pathfind(pos, num_stones):
                 break # a path has been found so use it
             # print('path: '+str(self.path))
 
