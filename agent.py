@@ -593,11 +593,19 @@ class env_class:
             line += '-'
         line += '+'
         print(line)
+        direction = self.compass.curr()
         for y in range(self.border_n, self.border_s - 1, -1):
             line = '|'
             for x in range(self.border_w, self.border_e + 1):
                 if (x == self.x and y == self.y):
-                    line += 'A' # TODO: Agent direction
+                    if direction == 'n':
+                        line += '^'
+                    elif direction == 'e':
+                        line += '>'
+                    elif direction == 's':
+                        line += 'v'
+                    elif direction == 'w':
+                        line += '<'
                 elif (x == 0 and y == 0):
                     line += 'X' # Start/End
                 elif (x,y) in self.rep:
