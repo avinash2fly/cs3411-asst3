@@ -51,12 +51,14 @@ def get_action(env):
 
     if env.has_gold:
         if not env.moves:
-            env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
+            path = env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
+            env.set_path(path)
         else:
             # check current path is still valid
             for step in env.path: # maybe should make method to check if current path is traversable
                 if not env.valid(step):
-                    env.pathfind((0,0))
+                    path = env.pathfind((0,0))
+                    env.set_path(path)
                     break
         return env.moves.pop(0)
 
@@ -158,6 +160,10 @@ class env_class:
         self.x = 0
         self.y = 0
 
+    def set_path(self, path):
+        self.path = path
+        self.moves = self.get_moves(path)
+
     def check_pois(self, num_stones = 0):
         # create a poi list in priority order
         pois = []
@@ -198,7 +204,9 @@ class env_class:
                     # previous path is no longer valid so clear it
                     self.moves = []
                     self.path = []
-            if self.pathfind(pos, num_stones):
+            path = self.pathfind(pos, num_stones)
+            if path:
+                self.set_path(path)
                 break # a path has been found so use it
             # print('path: '+str(self.path))
 
@@ -300,11 +308,9 @@ class env_class:
         # else return False
         path = self.astar((self.x, self.y), pos, num_stones)
         if not path:
-            return False # no path
+            return [] # no path
         path = [(self.x, self.y)] + path
-        self.path = path
-        self.moves = self.get_moves(path)
-        return True
+        return path
 
     def get_moves(self, path):
         # convert path to sequence of moves
