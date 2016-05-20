@@ -195,7 +195,9 @@ class env_class:
             else:
                 # previous path is no longer valid so clear it
                 self.clear_path()
-        path = self.pathfind(self.gold, self.num_stones)
+        path = self.pathfind(self.gold, self.num_stones, False) # first check if a certain path
+        if not path:
+            path = self.pathfind(self.gold)
         if path:
             self.set_path(path)
 
@@ -402,7 +404,7 @@ class env_class:
             moves.append('f')
         return moves
 
-    def pathfind(self, target, num_stones = 0):
+    def pathfind(self, target, num_stones = 0, optimistic = True):
         c, d = target
         start = (self.x, self.y)
 
@@ -439,7 +441,7 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) not in seen and self.valid((x,y), num_stones): # this bit prolly can be a function
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
@@ -448,7 +450,7 @@ class env_class:
             # expand e
             x = a + 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
@@ -457,7 +459,7 @@ class env_class:
             # expand s
             x = a
             y = b - 1
-            if (x,y) not in seen and self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
@@ -466,7 +468,7 @@ class env_class:
             # expand w
             x = a - 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
@@ -474,11 +476,13 @@ class env_class:
 
         return [] # no path
 
-    def valid(self, pos, num_stones = 0):
+    def valid(self, pos, num_stones = 0, optimistic = True):
         if pos not in self.rep:
             return False # out of borders
         tile = self.rep[pos]
-        if tile == '*':
+        if not optimistic and tile == '?':
+            return False
+        elif tile == '*':
             return False
         elif tile == '.':
             return False
