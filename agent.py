@@ -183,8 +183,10 @@ class env_class:
         # dont go for stones if would use two to get
         pois += sorted(tools, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
 
+        # go out of way to cut down doors since traditionally more interesting? even though mechanically the same as trees
         if self.has_key:
             pois += sorted(self.doors, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
+        # dont go out of way to cut down trees since often just obstacles
         # if self.has_axe:
         #     pois += sorted(self.trees, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
 
@@ -205,14 +207,14 @@ class env_class:
                         break
                 if valid:
                     # print(self.path)
-                    break # previous path is still valid, just continue with it
+                    return # previous path is still valid, just continue with it
                 else:
                     # previous path is no longer valid so clear it
                     self.clear_path()
             path = self.pathfind(pos, num_stones)
             if path:
                 self.set_path(path)
-                break # a path has been found so use it
+                return # a path has been found so use it
             # print('path: '+str(self.path))
 
     def explore(self):
