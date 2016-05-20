@@ -478,7 +478,8 @@ class env_class:
             self.doors.add(pos)
 
     def on_poi(self):
-        curr = self.rep[(self.x, self.y)]
+        pos = (self.x, self.y)
+        curr = self.rep[pos]
         if curr == 'a':
             self.axe.remove(pos)
             self.has_axe = True
@@ -493,7 +494,7 @@ class env_class:
             self.has_gold = True
         elif curr == '~':
             # place stone
-            self.rep[(self.x, self.y)] = 'O'
+            self.rep[pos] = 'O'
             self.num_stones -= 1
             # if self.num_stones < 0:
             #     ded
