@@ -74,9 +74,17 @@ def get_action(env):
             #         break
         #if path:
         #    env.moves = path
-    env.check_pois(0 if not env.use_stones else env.num_stones)
 
-    if not env.moves: # no paths to pois have been found, so use default behaviour
+    # search for path to gold
+    if env.gold:
+        env.check_gold()
+
+    # if no path to gold, search for paths to pois
+    if not env.moves or env.path[-1] != env.gold:
+        env.check_pois(0 if not env.use_stones else env.num_stones)
+
+    # if no paths to pois have been found, explore
+    if not env.moves:
         path = env.explore()
         print(path)
         if path:
@@ -170,18 +178,36 @@ class env_class:
         self.path = []
         self.moves = []
 
+    def check_gold(self):
+        # for gold, always allow all resources to be used
+        if self.path and self.path[-1] == self.gold:
+            # current path is to gold
+            # so need to check path is still valid
+            # maybe checking path validity should be a method...
+            valid = True
+            for step in self.path:
+                if not self.valid(step):
+                    valid = False
+                    break
+            if valid:
+                # previous path is still valid, just continue with it
+                return
+            else:
+                # previous path is no longer valid so clear it
+                self.clear_path()
+        path = self.pathfind(self.gold, self.num_stones)
+        if path:
+            self.set_path(path)
+
     def check_pois(self, num_stones = 0):
         # create a poi list in priority order
-        pois = []
-        if self.gold:
-            pois.append(self.gold)
-        tools = list(self.stone)
+        pois = list(self.stone)
         if not self.has_key:
-            tools += list(self.key)
+            pois += list(self.key)
         if not self.has_axe:
-            tools += list(self.axe)
+            pois += list(self.axe)
         # dont go for stones if would use two to get
-        pois += sorted(tools, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
+        pois = sorted(pois, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
 
         # go out of way to cut down doors since traditionally more interesting? even though mechanically the same as trees
         if self.has_key:
