@@ -195,7 +195,9 @@ class env_class:
             else:
                 # previous path is no longer valid so clear it
                 self.clear_path()
+        print("Gold!")
         path = self.pathfind(self.gold, self.num_stones, False) # first check if a certain path
+        print("End!")
         if not path:
             path = self.pathfind(self.gold)
         if path:
@@ -415,7 +417,7 @@ class env_class:
         # use a for loop
         # i.e. search for a path using 0 stones, then using 1 stones, etc. up to actual amount of stones
 
-        queue = [(0, 0, start, [])]
+        queue = [(0, 0, start, [], num_stones)]
         # insert nodes into queue based on mdist + prev cost
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos
         # first being 0 is dummy since will immediately be popped
@@ -428,15 +430,16 @@ class env_class:
 
         while len(queue) > 0:
             # pop queue
-            stones_used, _ , pos, path = heapq.heappop(queue)
+            stones_used, _ , pos, path, num_stones = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
+            print(stones_used, pos, path, num_stones)
 
             if pos == target:
                 return [start] + path
 
             if stones_used > num_stones:
-                break
+                continue
 
             prev = len(path)
             a, b = pos
@@ -447,7 +450,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
                 seen.add((x,y)) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
@@ -456,7 +459,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
                 seen.add((x,y))
 
             # expand s
@@ -465,7 +468,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
                 seen.add((x,y))
 
             # expand w
@@ -474,7 +477,7 @@ class env_class:
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
                 seen.add((x,y))
 
         return [] # no path
