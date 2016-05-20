@@ -415,7 +415,7 @@ class env_class:
         # use a for loop
         # i.e. search for a path using 0 stones, then using 1 stones, etc. up to actual amount of stones
 
-        queue = [(0, start, [], num_stones)]
+        queue = [(0, 0, start, [])]
         # insert nodes into queue based on mdist + prev cost
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos
         # first being 0 is dummy since will immediately be popped
@@ -428,12 +428,15 @@ class env_class:
 
         while len(queue) > 0:
             # pop queue
-            _ , pos, path, num_stones = heapq.heappop(queue)
+            stones_used, _ , pos, path = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
 
             if pos == target:
                 return [start] + path
+
+            if stones_used > num_stones:
+                break
 
             prev = len(path)
             a, b = pos
@@ -441,37 +444,37 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic): # this bit prolly can be a function
+            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic): # this bit prolly can be a function
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
                 seen.add((x,y)) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
             x = a + 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
+            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand s
             x = a
             y = b - 1
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
+            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand w
             x = a - 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic):
+            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
-                heapq.heappush(queue, (dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != '~' else num_stones - 1))
+                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
         return [] # no path
