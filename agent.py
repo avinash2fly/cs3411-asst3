@@ -94,7 +94,6 @@ class env_class:
         # if no paths to pois have been found, explore
         if not self.moves:
             path = self.explore()
-            print(path)
             if path:
                 self.set_path(path)
             else:
@@ -317,7 +316,7 @@ class env_class:
                     moves.append('r')
             else:
                 # bad path
-                print('Bad path')
+                # print('Bad path')
                 return False
             if self.rep[next_tile] == '-' and self.has_key:
                 moves.append('u')
@@ -346,9 +345,9 @@ class env_class:
             if pos == target:
                 return [start] + path
 
-            if num_stones < 0:
-                print('This shouldnt happen')
-                continue
+            # if num_stones < 0:
+            #     print('This shouldnt happen')
+            #     continue
 
             prev = len(path)
             a, b = pos
@@ -632,9 +631,9 @@ while True:
                 if ch == -1:
                     exit()
                 view[(x, y)] = ch
-    print_view(view)
+    # print_view(view)
     env.update(view, action)
-    env.show()
+    # env.show()
     action = env.get_action()
     out_stream.write(action)
     out_stream.flush()
