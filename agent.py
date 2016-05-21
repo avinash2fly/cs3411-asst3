@@ -334,10 +334,12 @@ class env_class:
             moves.append('f')
         return moves
 
-    def pathfind(self, target, num_stones = 0, optimistic = True, start = None, env = None):
+    def pathfind(self, target, num_stones = 0, optimistic = True, start = None, env = None, has_axe = None, has_key = None):
         c, d = target
         start = start or (self.x, self.y)
         env = env or self.rep
+        has_axe = has_axe or self.has_axe
+        has_key = has_key or self.has_key
 
         seen = set([start])
 
@@ -362,17 +364,29 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env): # this bit prolly can be a function
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env, has_axe, has_key): # this bit prolly can be a function
                 if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env, has_axe, has_key)
                     if next_path:
                         return [start] + path + next_path
                 elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env, has_axe, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'a' and not has_axe:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, True, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'k' and not has_key:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, has_axe, True)
                     if next_path:
                         return [start] + path + next_path
                 else:
@@ -383,70 +397,108 @@ class env_class:
             # expand e
             x = a + 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env, has_axe, has_key): # this bit prolly can be a function
                 if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env, has_axe, has_key)
                     if next_path:
                         return [start] + path + next_path
                 elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env, has_axe, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'a' and not has_axe:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, True, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'k' and not has_key:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, has_axe, True)
                     if next_path:
                         return [start] + path + next_path
                 else:
-                    dist = abs(x - c) + abs(y - d) + prev
+                    dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand s
             x = a
             y = b - 1
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env, has_axe, has_key): # this bit prolly can be a function
                 if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env, has_axe, has_key)
                     if next_path:
                         return [start] + path + next_path
                 elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env, has_axe, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'a' and not has_axe:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, True, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'k' and not has_key:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, has_axe, True)
                     if next_path:
                         return [start] + path + next_path
                 else:
-                    dist = abs(x - c) + abs(y - d) + prev
+                    dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand w
             x = a - 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env, has_axe, has_key): # this bit prolly can be a function
                 if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env, has_axe, has_key)
                     if next_path:
                         return [start] + path + next_path
                 elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env, has_axe, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'a' and not has_axe:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, True, has_key)
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.plan_ahead and env[(x,y)] == 'k' and not has_key:
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones, False, (x,y), next_env, has_axe, True)
                     if next_path:
                         return [start] + path + next_path
                 else:
-                    dist = abs(x - c) + abs(y - d) + prev
+                    dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
         return [] # no path
 
-    def valid(self, pos, num_stones = 0, optimistic = True, env = None):
+    def valid(self, pos, num_stones = 0, optimistic = True, env = None, has_axe = None, has_key = None):
         env = env or self.rep
+        has_axe = has_axe or self.has_axe
+        has_key = has_key or self.has_key
         if pos not in env:
             return False # out of borders
         tile = env[pos]
@@ -456,9 +508,9 @@ class env_class:
             return False
         elif tile == '.':
             return False
-        elif tile == 'T' and self.has_axe == False:
+        elif tile == 'T' and has_axe == False:
             return False
-        elif tile == '-' and self.has_key == False:
+        elif tile == '-' and has_key == False:
             return False
         elif tile == '~' and num_stones == 0:
             return False
