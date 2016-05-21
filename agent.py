@@ -10,7 +10,7 @@
 
 import sys, os, socket, heapq, random
 
-class compass_class:
+class Compass:
     def __init__(self, start = 'n'):
         self.directions = ['n', 'e', 's', 'w']
         if start in self.directions:
@@ -25,7 +25,6 @@ class compass_class:
         return self.directions[self.i]
 
 class Agent:
-    """Representation of known game environment"""
     def __init__(self):
         self.env = {} # dict mapping relative co-ordinates to tile types
 
@@ -35,7 +34,7 @@ class Agent:
         self.border_s = 0
         self.border_w = 0
 
-        self.compass = compass_class()
+        self.compass = Compass()
 
         # poi locations relative to start (as tuples)
         self.axe = set()
@@ -252,7 +251,7 @@ class Agent:
     def get_moves(self, path):
         # convert path to sequence of moves
         moves = []
-        compass = compass_class(self.compass.curr())
+        compass = Compass(self.compass.curr())
         for i, curr_tile in enumerate(path):
             if i + 1 >= len(path):
                 break # end of path
