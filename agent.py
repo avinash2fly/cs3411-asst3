@@ -406,9 +406,9 @@ class env_class:
             moves.append('f')
         return moves
 
-    def pathfind(self, target, num_stones = 0, optimistic = True):
+    def pathfind(self, target, num_stones = 0, optimistic = True, start = None):
         c, d = target
-        start = (self.x, self.y)
+        start = start or (self.x, self.y)
 
         # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
@@ -448,6 +448,14 @@ class env_class:
             x = a
             y = b + 1
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic): # this bit prolly can be a function
+                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.rep[(x,y)] == 'o':
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
                 dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
                 # insert into priority queue
                 heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
@@ -457,6 +465,14 @@ class env_class:
             x = a + 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
+                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.rep[(x,y)] == 'o':
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
@@ -466,6 +482,14 @@ class env_class:
             x = a
             y = b - 1
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
+                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.rep[(x,y)] == 'o':
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
@@ -475,6 +499,14 @@ class env_class:
             x = a - 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
+                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
+                elif self.rep[(x,y)] == 'o':
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                    if next_path:
+                        return [start] + path + next_path
                 dist = abs(x - c) + abs(y - d) + prev
                 # insert into priority queue
                 heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
