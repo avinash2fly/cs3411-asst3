@@ -24,8 +24,7 @@ class compass_class:
     def curr(self):
         return self.directions[self.i]
 
-# this is really a rep of whole game now... maybe rename rep to env and env_class to game?
-class env_class:
+class Agent:
     """Representation of known game environment"""
     def __init__(self):
         self.rep = {} # dict mapping relative co-ordinates to tile types
@@ -595,7 +594,6 @@ class env_class:
         print('has_gold: ' + str(self.has_gold))
         print('trees: ' + str(self.trees))
         print('doors: ' + str(self.doors))
-env = env_class()
 
 def print_view(view):
     print("+-----+")
@@ -620,6 +618,7 @@ in_stream = sd.makefile('r')
 out_stream = sd.makefile('w')
 
 action = ''
+agent = Agent()
 
 while True:
     # scan 5-by-5 window around curr loc
@@ -632,8 +631,8 @@ while True:
                     exit()
                 view[(x, y)] = ch
     # print_view(view)
-    env.update(view, action)
-    # env.show()
-    action = env.get_action()
+    agent.update(view, action)
+    # agent.show()
+    action = agent.get_action()
     out_stream.write(action)
     out_stream.flush()
