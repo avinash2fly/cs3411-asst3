@@ -8,7 +8,7 @@
 # COMP3411 Artificial Intelligence
 # UNSW Session 1, 2016
 
-import sys, os, socket, heapq, random
+import sys, os, socket, heapq
 
 class Compass:
     def __init__(self, start = 'n'):
