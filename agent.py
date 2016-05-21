@@ -3,6 +3,8 @@
 # agent.py
 # By Sean Batongbacal
 # Agent for Text-Based Adventure Game
+# Assignment 3
+# http://www.cse.unsw.edu.au/~cs3411/16s1/hw3/index.html
 # COMP3411 Artificial Intelligence
 # UNSW Session 1, 2016
 
@@ -22,7 +24,6 @@ class compass_class:
     def curr(self):
         return self.directions[self.i]
 
-# maybe stick env stuff in its own module?
 # this is really a rep of whole game now... maybe rename rep to env and env_class to game?
 class env_class:
     """Representation of known game environment"""
@@ -69,13 +70,13 @@ class env_class:
         self.moves = []
 
     def get_action(self):
-        if self.has_gold: # maybe make this a method too?
+        if self.has_gold:
             if not self.moves:
                 path = self.pathfind((0,0))
                 self.set_path(path)
             else:
                 # check current path is still valid
-                for step in self.path: # maybe should make method to check if current path is traversable
+                for step in self.path:
                     if not self.valid(step):
                         path = self.pathfind((0,0))
                         self.set_path(path)
@@ -117,7 +118,6 @@ class env_class:
         if self.path and self.path[-1] == self.gold:
             # current path is to gold
             # so need to check path is still valid
-            # maybe checking path validity should be a method...
             valid = True
             num_stones = self.num_stones
             for step in self.path:
@@ -190,7 +190,7 @@ class env_class:
             y = b + 1
             if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
-                for x1 in range(x-2,x+3): # since everything else would have been checked when (a,b) was
+                for x1 in range(x-2,x+3):
                     if (x1,y+2) not in self.rep or self.rep[(x1,y+2)] == '?':
                         step = (x,y)
                         path = [step]
@@ -198,8 +198,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        print((x,y))
-                        print((x1,y+2))
                         return path
                 queue.append((x,y))
 
@@ -216,8 +214,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        print((x,y))
-                        print((x+2,y1))
                         return path
                 queue.append((x,y))
 
@@ -234,8 +230,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        print((x,y))
-                        print((x1,y-2))
                         return path
                 queue.append((x,y))
 
@@ -252,8 +246,6 @@ class env_class:
                             step = seen[step]
                             path.append(step)
                         path.reverse()
-                        print((x,y))
-                        print((x-2,y1))
                         return path
                 queue.append((x,y))
 
