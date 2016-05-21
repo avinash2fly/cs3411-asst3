@@ -146,7 +146,8 @@ class Agent:
             pois += list(self.axe)
         pois = sorted(pois, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
 
-        # go out of way to cut down doors since traditionally more interesting? even though mechanically the same as trees
+        # go out of way to cut down doors since traditionally more interesting?
+        # (even though mechanically the same as trees)
         if self.has_key:
             pois += sorted(self.doors, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
         # dont go out of way to cut down trees since often just obstacles
@@ -352,7 +353,7 @@ class Agent:
             expansions = [(a,b+1), (a+1,b), (a,b-1), (a-1,b)] # nesw
             
             for exp in expansions:
-                if exp not in seen and self.valid(exp, num_stones, optimistic, env, has_axe, has_key): # this bit prolly can be a function
+                if exp not in seen and self.valid(exp, num_stones, optimistic, env, has_axe, has_key):
                     if self.plan_ahead and env[exp] == '~':
                         next_env = env.copy()
                         next_env[exp] = 'O'
