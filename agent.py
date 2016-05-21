@@ -185,10 +185,13 @@ class env_class:
             # so need to check path is still valid
             # maybe checking path validity should be a method...
             valid = True
+            num_stones = self.num_stones
             for step in self.path:
-                if not self.valid(step):
+                if not self.valid(step, num_stones):
                     valid = False
                     break
+                elif self.rep[step] == 'o':
+                    num_stones += 1
             if valid:
                 # previous path is still valid, just continue with it
                 return
@@ -202,6 +205,7 @@ class env_class:
             path = self.pathfind(self.gold)
         if path:
             self.set_path(path)
+        print(path)
 
     def check_pois(self, num_stones = 0):
         # create a poi list in priority order
@@ -406,9 +410,10 @@ class env_class:
             moves.append('f')
         return moves
 
-    def pathfind(self, target, num_stones = 0, optimistic = True, start = None):
+    def pathfind(self, target, num_stones = 0, optimistic = True, start = None, env = None):
         c, d = target
         start = start or (self.x, self.y)
+        env = env or self.rep
 
         # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
@@ -417,7 +422,7 @@ class env_class:
         # use a for loop
         # i.e. search for a path using 0 stones, then using 1 stones, etc. up to actual amount of stones
 
-        queue = [(0, 0, start, [], num_stones)]
+        queue = [(0, start, [])]
         # insert nodes into queue based on mdist + prev cost
         # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos
         # first being 0 is dummy since will immediately be popped
@@ -430,15 +435,16 @@ class env_class:
 
         while len(queue) > 0:
             # pop queue
-            stones_used, _ , pos, path, num_stones = heapq.heappop(queue)
+            _ , pos, path = heapq.heappop(queue)
             # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
             #      continue
-            print(stones_used, pos, path, num_stones)
+            # print(stones_used, pos, path)
 
             if pos == target:
                 return [start] + path
 
-            if stones_used > num_stones:
+            if num_stones < 0:
+                print('This shouldnt happen')
                 continue
 
             prev = len(path)
@@ -447,77 +453,98 @@ class env_class:
             # expand n
             x = a
             y = b + 1
-            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic): # this bit prolly can be a function
-                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env): # this bit prolly can be a function
+                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_env = env.copy()
+                    next_env[(x,y)] = 'O'
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif self.rep[(x,y)] == 'o':
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                elif env[(x,y)] == 'o':
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
-                # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
+                else:
+                    dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
+                    # insert into priority queue
+                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y)) # means that if tried later i.e. by something with higher prior cost, is skipped
 
             # expand e
             x = a + 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
-                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_env = env.copy()
+                    next_env[(x,y)] = 'O'
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif self.rep[(x,y)] == 'o':
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                elif env[(x,y)] == 'o':
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                dist = abs(x - c) + abs(y - d) + prev
-                # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
+                else:
+                    dist = abs(x - c) + abs(y - d) + prev
+                    # insert into priority queue
+                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand s
             x = a
             y = b - 1
-            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
-                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_env = env.copy()
+                    next_env[(x,y)] = 'O'
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif self.rep[(x,y)] == 'o':
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                elif env[(x,y)] == 'o':
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                dist = abs(x - c) + abs(y - d) + prev
-                # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
+                else:
+                    dist = abs(x - c) + abs(y - d) + prev
+                    # insert into priority queue
+                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
             # expand w
             x = a - 1
             y = b
-            if (x,y) not in seen and self.valid((x,y), num_stones - stones_used, optimistic):
-                if self.rep[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
-                    next_path = self.pathfind(target, num_stones - 1, False, (x,y))
+            if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
+                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                    next_env = env.copy()
+                    next_env[(x,y)] = 'O'
+                    next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif self.rep[(x,y)] == 'o':
-                    next_path = self.pathfind(target, num_stones + 1, False, (x,y))
+                elif env[(x,y)] == 'o':
+                    next_env = env.copy()
+                    next_env[(x,y)] = ' '
+                    next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                dist = abs(x - c) + abs(y - d) + prev
-                # insert into priority queue
-                heapq.heappush(queue, (stones_used if self.rep[(x,y)] != '~' else stones_used + 1, dist, (x,y), path + [(x,y)], num_stones if self.rep[(x,y)] != 'o' else num_stones + 1))
+                else:
+                    dist = abs(x - c) + abs(y - d) + prev
+                    # insert into priority queue
+                    heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
         return [] # no path
 
-    def valid(self, pos, num_stones = 0, optimistic = True):
-        if pos not in self.rep:
+    def valid(self, pos, num_stones = 0, optimistic = True, env = None):
+        env = env or self.rep
+        if pos not in env:
             return False # out of borders
-        tile = self.rep[pos]
+        tile = env[pos]
         if not optimistic and tile == '?':
             return False
         elif tile == '*':
