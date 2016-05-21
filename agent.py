@@ -8,6 +8,52 @@
 # COMP3411 Artificial Intelligence
 # UNSW Session 1, 2016
 
+# The agent stores a selection of data in order to function. A representation
+# of the environment is stored as a dictionary where the keys are tuples 
+# representing xy coordinates relative to the starting location, which is (0,0).
+# The locations of points of interest (pois), i.e. axes, keys, stones, trees
+# and doors, are stored as sets of tuples, and the location of the gold is
+# stored as a single tuple. What the agent currently possseses are stored as
+# booleans, except for stones which is stored as an integer. The situation
+# of the agent is stored via x and y coordinates as well as a compass which
+# represents its current direction. Whether the agent will plan ahead in order
+# to correctly place stones is stored as a boolean. Finally, its current path
+# and sequence of moves to move along it are stored as lists.
+
+# The view is stored as a dict where keys are coordinates relative to the
+# agent similar to the environment. The agent takes the sent view and uses
+# it to update its stored representation of the environment. It then considers
+# a series of targets in priority order: winning (i.e. returning to to the
+# start with the gold), getting the gold, getting tools (by going to the pois)
+# and exploring. It searches for paths for each of these in priority order.
+# Pathfinding uses A* search, with the Manhattan distance as a heuristic,
+# implemented using a priority queue with lower costs being higher priority.
+# If a path is found, it replaces its current path with it. If it reaches
+# its previous target (i.e. no paths to anything of higher priority), it
+# checks whether the previous path is still valid, and if it is continues
+# with that rather than search for a new path. Otherwise, it tries to find a
+# new path, and failing that continues checking the other targets. The tools
+# are sorted by proximity to the agent so it tries to get ones closest to it
+# first. If none of the targets have paths, then the agent tries to explore.
+# It does this by performing a breadth-first search on the known environment
+# from its current position, looking for points where it can see unmapped
+# areas (and thus map them), including those outside known borders, and goes
+# to the first it finds. If there are no unmapped areas it can can explore,
+# it switches to planning ahead. In this mode, it still performs A* searches
+# to pathfind but when it reaches a junction point e.g. placing a stone or
+# getting tools, it searches again but using the state the world would be in
+# at that time, simulating what would happen if the agent actually did that by
+# pathfinding to the same place but from the "future" location. In this way,
+# it eliminates any possiblities which would not achieve its goal of getting
+# the gold, such as placing stones in bad places, by predicting the future
+# consequences of actions. This is why Agent.pathfind and Agent.valid have
+# so many parameters: so they can be provided a future state. Additionally,
+# the agent is not allowed to place stones until it has fully explored the
+# environment to such an extent that it cannot progress without placing stones,
+# preventing it from making any naive decisions about stone placement which
+# could prevent it from winning later. i.e. it acts naively when it can
+# afford to, in the hopes of winning quicker, but plans ahead when it can't.
+
 import sys, os, socket, heapq
 
 class Compass:
