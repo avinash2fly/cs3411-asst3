@@ -81,7 +81,7 @@ def get_action(env):
 
     # if no path to gold, search for paths to pois
     if not env.moves or env.path[-1] != env.gold:
-        env.check_pois(0 if not env.use_stones else env.num_stones)
+        env.check_pois(0 if not env.plan_ahead else env.num_stones)
 
     # if no paths to pois have been found, explore
     if not env.moves:
@@ -92,8 +92,9 @@ def get_action(env):
         else:
             # must use tools
             print('No more to explore')
-            env.use_stones = True
-            env.check_pois(env.num_stones)
+            env.plan_ahead = True
+            return get_action(env)
+            # env.check_pois(env.num_stones)
             # return raw_input('Action: ')
             # return 'f'
     print(env.path)
@@ -161,7 +162,7 @@ class env_class:
         self.num_stones = 0
         self.has_gold = False
 
-        self.use_stones = False
+        self.plan_ahead = False
 
         self.path = []
         self.moves = []
@@ -199,7 +200,7 @@ class env_class:
                 # previous path is no longer valid so clear it
                 self.clear_path()
         print("Gold!")
-        path = self.pathfind(self.gold, self.num_stones, False) # first check if a certain path
+        path = self.pathfind(self.gold, 0 if not self.plan_ahead else self.num_stones, False) # first check if a certain path
         print("End!")
         if not path:
             path = self.pathfind(self.gold)
@@ -454,13 +455,13 @@ class env_class:
             x = a
             y = b + 1
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env): # this bit prolly can be a function
-                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif env[(x,y)] == 'o':
+                elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
                     next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
@@ -476,13 +477,13 @@ class env_class:
             x = a + 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif env[(x,y)] == 'o':
+                elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
                     next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
@@ -498,13 +499,13 @@ class env_class:
             x = a
             y = b - 1
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif env[(x,y)] == 'o':
+                elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
                     next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
@@ -520,13 +521,13 @@ class env_class:
             x = a - 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
                     if next_path:
                         return [start] + path + next_path
-                elif env[(x,y)] == 'o':
+                elif self.plan_ahead and env[(x,y)] == 'o':
                     next_env = env.copy()
                     next_env[(x,y)] = ' '
                     next_path = self.pathfind(target, num_stones + 1, False, (x,y), next_env)
