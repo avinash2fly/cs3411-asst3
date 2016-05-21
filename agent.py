@@ -27,7 +27,7 @@ class compass_class:
 class Agent:
     """Representation of known game environment"""
     def __init__(self):
-        self.rep = {} # dict mapping relative co-ordinates to tile types
+        self.env = {} # dict mapping relative co-ordinates to tile types
 
         # env borders (mainly for show())
         self.border_n = 0
@@ -104,9 +104,9 @@ class Agent:
         if self.moves[0] == 'f':
             next_tile = self.path[1]
             # remove obstacles if necessary
-            if self.rep[next_tile] == 'T':
+            if self.env[next_tile] == 'T':
                 return 'c'
-            elif self.rep[next_tile] == '-':
+            elif self.env[next_tile] == '-':
                 return 'u'
             # update path
             self.path.pop(0)
@@ -122,7 +122,7 @@ class Agent:
                 if not self.valid(step, num_stones):
                     valid = False
                     break
-                elif self.rep[step] == 'o':
+                elif self.env[step] == 'o':
                     num_stones += 1
             if valid:
                 # previous path is still valid, just continue with it
@@ -189,7 +189,7 @@ class Agent:
             if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3):
-                    if (x1,y+2) not in self.rep or self.rep[(x1,y+2)] == '?':
+                    if (x1,y+2) not in self.env or self.env[(x1,y+2)] == '?':
                         step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
@@ -205,7 +205,7 @@ class Agent:
             if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
-                    if (x+2, y1) not in self.rep or self.rep[(x+2,y1)] == '?':
+                    if (x+2, y1) not in self.env or self.env[(x+2,y1)] == '?':
                         step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
@@ -221,7 +221,7 @@ class Agent:
             if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for x1 in range(x-2,x+3):
-                    if (x1, y-2) not in self.rep or self.rep[(x1,y-2)] == '?':
+                    if (x1, y-2) not in self.env or self.env[(x1,y-2)] == '?':
                         step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
@@ -237,7 +237,7 @@ class Agent:
             if (x,y) not in seen and self.valid((x,y)):
                 seen[(x,y)] = (a,b)
                 for y1 in range(y-2,y+3):
-                    if (x-2, y1) not in self.rep or self.rep[(x-2,y1)] == '?':
+                    if (x-2, y1) not in self.env or self.env[(x-2,y1)] == '?':
                         step = (x,y)
                         path = [step]
                         while step != (self.x,self.y):
@@ -317,9 +317,9 @@ class Agent:
                 # bad path
                 # print('Bad path')
                 return False
-            if self.rep[next_tile] == '-' and self.has_key:
+            if self.env[next_tile] == '-' and self.has_key:
                 moves.append('u')
-            elif self.rep[next_tile] == 'T' and self.has_axe:
+            elif self.env[next_tile] == 'T' and self.has_axe:
                 moves.append('c')
             moves.append('f')
         return moves
@@ -327,7 +327,7 @@ class Agent:
     def pathfind(self, target, num_stones = 0, optimistic = True, start = None, env = None, has_axe = None, has_key = None):
         c, d = target
         start = start or (self.x, self.y)
-        env = env or self.rep
+        env = env or self.env
         has_axe = has_axe or self.has_axe
         has_key = has_key or self.has_key
 
@@ -386,7 +386,7 @@ class Agent:
         return [] # no path
 
     def valid(self, pos, num_stones = 0, optimistic = True, env = None, has_axe = None, has_key = None):
-        env = env or self.rep
+        env = env or self.env
         has_axe = has_axe or self.has_axe
         has_key = has_key or self.has_key
         if pos not in env:
@@ -408,22 +408,22 @@ class Agent:
             return True
 
     def check(self, pos):
-        if self.rep[pos] == 'a' and pos not in self.axe:
+        if self.env[pos] == 'a' and pos not in self.axe:
             self.axe.add(pos)
-        elif self.rep[pos] == 'k' and pos not in self.key:
+        elif self.env[pos] == 'k' and pos not in self.key:
             self.key.add(pos)
-        elif self.rep[pos] == 'o' and pos not in self.stone:
+        elif self.env[pos] == 'o' and pos not in self.stone:
             self.stone.add(pos)
-        elif self.rep[pos] == 'g'and self.gold != pos:
+        elif self.env[pos] == 'g'and self.gold != pos:
             self.gold = pos
-        elif self.rep[pos] == 'T' and pos not in self.trees:
+        elif self.env[pos] == 'T' and pos not in self.trees:
             self.trees.add(pos)
-        elif self.rep[pos] == '-' and pos not in self.doors:
+        elif self.env[pos] == '-' and pos not in self.doors:
             self.doors.add(pos)
 
     def on_poi(self):
         pos = (self.x, self.y)
-        curr = self.rep[pos]
+        curr = self.env[pos]
         if curr == 'a':
             self.axe.remove(pos)
             self.has_axe = True
@@ -438,7 +438,7 @@ class Agent:
             self.has_gold = True
         elif curr == '~':
             # place stone
-            self.rep[pos] = 'O'
+            self.env[pos] = 'O'
             self.num_stones -= 1
             # if self.num_stones < 0:
             #     ded
@@ -447,9 +447,9 @@ class Agent:
 
     def update(self, view, action):
         direction = self.compass.curr()
-        if not self.rep: # just spawned
-            self.rep = view
-            self.rep[(0,0)] = ' '
+        if not self.env: # just spawned
+            self.env = view
+            self.env[(0,0)] = ' '
             self.border_n =  2
             self.border_e =  2
             self.border_s = -2
@@ -461,72 +461,72 @@ class Agent:
             # add new stuff to env if moved
             if direction == 'n':
                 self.y += 1
-                curr = self.rep[(self.x, self.y)]
+                curr = self.env[(self.x, self.y)]
                 if curr == '*' or curr == 'T' or curr == '-':
                     self.y -= 1
                     return # tried to walk into a wall, nothing happened
                 # top row is new
                 for x in range(-2, 3):
-                    self.rep[(self.x + x, self.y + 2)] = view[(x,2)]
+                    self.env[(self.x + x, self.y + 2)] = view[(x,2)]
                     self.check((self.x + x, self.y + 2))
                 # update tile you just stepped off
-                self.rep[(self.x, self.y - 1)] = view[(0,-1)]
+                self.env[(self.x, self.y - 1)] = view[(0,-1)]
                 if self.y + 2 > self.border_n:
                     self.border_n = self.y + 2
                     for x in range(self.border_w, self.border_e + 1):
-                        if (x, self.border_n) not in self.rep:
-                            self.rep[(x, self.border_n)] = '?'
+                        if (x, self.border_n) not in self.env:
+                            self.env[(x, self.border_n)] = '?'
             elif direction == 'e':
                 self.x += 1
-                curr = self.rep[(self.x, self.y)]
+                curr = self.env[(self.x, self.y)]
                 if curr == '*' or curr == 'T' or curr == '-':
                     self.x -= 1
                     return # tried to walk into a wall, nothing happened
                 # right col is new
                 for x in range(-2, 3):
-                    self.rep[(self.x + 2, self.y - x)] = view[(x,2)]
+                    self.env[(self.x + 2, self.y - x)] = view[(x,2)]
                     self.check((self.x + 2, self.y - x))
                 # update tile you just stepped off
-                self.rep[(self.x - 1, self.y)] = view[(0,-1)]
+                self.env[(self.x - 1, self.y)] = view[(0,-1)]
                 if self.x + 2 > self.border_e:
                     self.border_e = self.x + 2
                     for y in range(self.border_s, self.border_n + 1):
-                        if (self.border_e, y) not in self.rep:
-                            self.rep[(self.border_e, y)] = '?'
+                        if (self.border_e, y) not in self.env:
+                            self.env[(self.border_e, y)] = '?'
             elif direction == 's':
                 self.y -= 1
-                curr = self.rep[(self.x, self.y)]
+                curr = self.env[(self.x, self.y)]
                 if curr == '*' or curr == 'T' or curr == '-':
                     self.y += 1
                     return # tried to walk into a wall, nothing happened
                 # bottom row is new
                 for x in range(-2, 3):
-                    self.rep[(self.x - x, self.y - 2)] = view[(x,2)]
+                    self.env[(self.x - x, self.y - 2)] = view[(x,2)]
                     self.check((self.x - x, self.y - 2))
                 # update tile you just stepped off
-                self.rep[(self.x, self.y + 1)] = view[(0,-1)]
+                self.env[(self.x, self.y + 1)] = view[(0,-1)]
                 if self.y - 2 < self.border_s:
                     self.border_s = self.y - 2
                     for x in range(self.border_w, self.border_e + 1):
-                        if (x, self.border_s) not in self.rep:
-                            self.rep[(x, self.border_s)] = '?'
+                        if (x, self.border_s) not in self.env:
+                            self.env[(x, self.border_s)] = '?'
             elif direction == 'w':
                 self.x -= 1
-                curr = self.rep[(self.x, self.y)]
+                curr = self.env[(self.x, self.y)]
                 if curr == '*' or curr == 'T' or curr == '-':
                     self.x += 1
                     return # tried to walk into a wall, nothing happened
                 # left col is new
                 for x in range(-2, 3):
-                    self.rep[(self.x - 2, self.y + x)] = view[(x,2)]
+                    self.env[(self.x - 2, self.y + x)] = view[(x,2)]
                     self.check((self.x - 2, self.y + x))
                 # update tile you just stepped off
-                self.rep[(self.x + 1, self.y)] = view[(0,-1)]
+                self.env[(self.x + 1, self.y)] = view[(0,-1)]
                 if self.x - 2 < self.border_w:
                     self.border_w = self.x - 2
                     for y in range(self.border_s, self.border_n + 1):
-                        if (self.border_w, y) not in self.rep:
-                            self.rep[(self.border_w, y)] = '?'
+                        if (self.border_w, y) not in self.env:
+                            self.env[(self.border_w, y)] = '?'
             self.on_poi()
         elif action == 'l':
             self.compass.left()
@@ -548,7 +548,7 @@ class Agent:
             elif direction == 'w':
                 x = self.x - 1
                 y = self.y
-            self.rep[(x, y)] = view[(0,1)]
+            self.env[(x, y)] = view[(0,1)]
             self.trees.discard((x,y))
             self.doors.discard((x,y))
 
@@ -573,8 +573,8 @@ class Agent:
                         line += '<'
                 elif (x == 0 and y == 0):
                     line += 'X' # Start/End
-                elif (x,y) in self.rep:
-                    line += self.rep[(x, y)]
+                elif (x,y) in self.env:
+                    line += self.env[(x, y)]
                 else:
                     line += '/' # should never be printed
             line += '|'
