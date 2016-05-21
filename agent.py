@@ -22,51 +22,6 @@ class compass_class:
     def curr(self):
         return self.directions[self.i]
 
-def get_action(env):
-    if env.has_gold: # maybe make this a method too?
-        if not env.moves:
-            path = env.pathfind((0,0))
-            env.set_path(path)
-        else:
-            # check current path is still valid
-            for step in env.path: # maybe should make method to check if current path is traversable
-                if not env.valid(step):
-                    path = env.pathfind((0,0))
-                    env.set_path(path)
-                    break
-        return env.moves.pop(0)
-
-    # search for path to gold
-    if env.gold:
-        env.check_gold()
-
-    # if no path to gold, search for paths to pois
-    if not env.moves or env.path[-1] != env.gold:
-        env.check_pois(0 if not env.plan_ahead else env.num_stones)
-
-    # if no paths to pois have been found, explore
-    if not env.moves:
-        path = env.explore()
-        print(path)
-        if path:
-            env.set_path(path)
-        else:
-            # enable planning ahead to deploy stones
-            # this should only ever happen once
-            env.plan_ahead = True
-            return get_action(env)
-
-    if env.moves[0] == 'f':
-        next_tile = env.path[1]
-        # remove obstacles if necessary
-        if env.rep[next_tile] == 'T':
-            return 'c'
-        elif env.rep[next_tile] == '-':
-            return 'u'
-        # update path
-        env.path.pop(0)
-    return env.moves.pop(0)
-
 # maybe stick env stuff in its own module?
 # this is really a rep of whole game now... maybe rename rep to env and env_class to game?
 class env_class:
@@ -112,6 +67,51 @@ class env_class:
     def clear_path(self):
         self.path = []
         self.moves = []
+
+    def get_action(self):
+        if self.has_gold: # maybe make this a method too?
+            if not self.moves:
+                path = self.pathfind((0,0))
+                self.set_path(path)
+            else:
+                # check current path is still valid
+                for step in self.path: # maybe should make method to check if current path is traversable
+                    if not self.valid(step):
+                        path = self.pathfind((0,0))
+                        self.set_path(path)
+                        break
+            return self.moves.pop(0)
+
+        # search for path to gold
+        if self.gold:
+            self.check_gold()
+
+        # if no path to gold, search for paths to pois
+        if not self.moves or self.path[-1] != self.gold:
+            self.check_pois(0 if not self.plan_ahead else self.num_stones)
+
+        # if no paths to pois have been found, explore
+        if not self.moves:
+            path = self.explore()
+            print(path)
+            if path:
+                self.set_path(path)
+            else:
+                # enable planning ahead to deploy stones
+                # this should only ever happen once
+                self.plan_ahead = True
+                return self.get_action()
+
+        if self.moves[0] == 'f':
+            next_tile = self.path[1]
+            # remove obstacles if necessary
+            if self.rep[next_tile] == 'T':
+                return 'c'
+            elif self.rep[next_tile] == '-':
+                return 'u'
+            # update path
+            self.path.pop(0)
+        return self.moves.pop(0)
 
     def check_gold(self):
         if self.path and self.path[-1] == self.gold:
@@ -691,6 +691,6 @@ while True:
     print_view(view)
     env.update(view, action)
     env.show()
-    action = get_action(env)
+    action = env.get_action()
     out_stream.write(action)
     out_stream.flush()
