@@ -54,7 +54,7 @@
 # could prevent it from winning later. i.e. it acts naively when it can
 # afford to, in the hopes of winning quicker, but plans ahead when it can't.
 
-import sys, os, socket, heapq
+import sys, socket, heapq
 
 class Compass:
     def __init__(self, start = 'n'):
