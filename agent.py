@@ -86,7 +86,7 @@ class Agent:
         self.axe = set()
         self.key = set()
         self.stone = set()
-        self.gold = False
+        self.gold = None
         self.trees = set()
         self.doors = set()
 
