@@ -8,25 +8,6 @@
 
 import sys, os, socket, heapq, random
 
-# tile types?
-# 'T' tree
-# '.' off map
-# '-' door
-# '~' water
-# '*' wall
-# 'a' axe
-# 'k' key
-# 'o' stepping stone
-# 'O' placed stone
-# 'g' gold
-
-# commands
-# L left
-# R right
-# F forward
-# C chop
-# U unlock
-
 class compass_class:
     def __init__(self, start = 'n'):
         self.directions = ['n', 'e', 's', 'w']
@@ -42,16 +23,9 @@ class compass_class:
         return self.directions[self.i]
 
 def get_action(env):
-    # returns an action from env.moves, setting it appropriately
-
-    # action = raw_input('Action: ')
-    # if action:
-    #     env.moves = []
-    #     return action # for debugging
-
-    if env.has_gold:
+    if env.has_gold: # maybe make this a method too?
         if not env.moves:
-            path = env.pathfind((0,0)) # since ?s are assumed traversable may provide a path which doesnt work
+            path = env.pathfind((0,0))
             env.set_path(path)
         else:
             # check current path is still valid
@@ -61,19 +35,6 @@ def get_action(env):
                     env.set_path(path)
                     break
         return env.moves.pop(0)
-
-    # pois are sorted in order of interestingness: gold first, then tools (closest first), then removable obstacles
-    #if env.gold:
-        # first search with current tools
-        #path = env.pathfind(env.gold)
-        # if not path:
-            # then figure out if stones required and how many
-            # for i in range(0, 5):
-            #     path = env.pathfind(env.gold, num_stones = i)
-            #     if path:
-            #         break
-        #if path:
-        #    env.moves = path
 
     # search for path to gold
     if env.gold:
@@ -90,48 +51,21 @@ def get_action(env):
         if path:
             env.set_path(path)
         else:
-            # must use tools
-            print('No more to explore')
+            # enable planning ahead to deploy stones
+            # this should only ever happen once
             env.plan_ahead = True
             return get_action(env)
-            # env.check_pois(env.num_stones)
-            # return raw_input('Action: ')
-            # return 'f'
-    print(env.path)
-    print(env.moves)
 
-    # print('env.moves:' + str(env.moves))
     if env.moves[0] == 'f':
         next_tile = env.path[1]
+        # remove obstacles if necessary
         if env.rep[next_tile] == 'T':
             return 'c'
         elif env.rep[next_tile] == '-':
             return 'u'
+        # update path
         env.path.pop(0)
     return env.moves.pop(0)
-
-    # when you see a poi, immediately search for a path to it and store the path. now update the path each time you move to counter the move. if you move in a certain way e.g. u turns you should search for a new path with your updated env
-
-    # targets of opportunity
-    # if see a poi which is trivial to obtain (and the gold is not trivial to obtain), immediately go for the poi in order to avoid backtracking for it later
-
-    # first, try to map env, noting pois, taking targets of opportunity, etc.
-    # when see gold, search for path w/ current items
-    # if succeeds, go for gold and return to start
-    # if fails, search for path w/ each other item
-    # note required items and either search for them if not known or path to them if known
-
-    # map env by searching e.g. grid type search(?)
-    # grab pois if path (but not if path needs stone); if part of a path would be unknown, assume you can go through them.
-    # only use stones if necessary to get gold or to be able to search more (i.e. nowhere else to go unless use stone)
-    # remove any obstacles if possible
-    # when gold found, search for path
-
-    # search env for points of interest in priority order (priority queue; lists for each type of poi, append to appropriate list, then search lists in order of type by priority)
-    # ^only search newly added bits?
-    # search for path to appropriate pois
-    # if no path, try next poi
-    # maybe store previously planned path and just continue if same poi is highest priority still
 
 # maybe stick env stuff in its own module?
 # this is really a rep of whole game now... maybe rename rep to env and env_class to game?
@@ -180,7 +114,6 @@ class env_class:
         self.moves = []
 
     def check_gold(self):
-        # for gold, always allow all resources to be used
         if self.path and self.path[-1] == self.gold:
             # current path is to gold
             # so need to check path is still valid
@@ -199,14 +132,13 @@ class env_class:
             else:
                 # previous path is no longer valid so clear it
                 self.clear_path()
-        print("Gold!")
-        path = self.pathfind(self.gold, 0 if not self.plan_ahead else self.num_stones, False) # first check if a certain path
-        print("End!")
+        # first check for definite path
+        path = self.pathfind(self.gold, 0 if not self.plan_ahead else self.num_stones, False) 
         if not path:
+            # else check for path with unknowns
             path = self.pathfind(self.gold)
         if path:
             self.set_path(path)
-        print(path)
 
     def check_pois(self, num_stones = 0):
         # create a poi list in priority order
@@ -215,7 +147,6 @@ class env_class:
             pois += list(self.key)
         if not self.has_axe:
             pois += list(self.axe)
-        # dont go for stones if would use two to get
         pois = sorted(pois, key = lambda pos: abs(pos[0] - self.x) + abs(pos[1] - self.y))
 
         # go out of way to cut down doors since traditionally more interesting? even though mechanically the same as trees
@@ -227,22 +158,18 @@ class env_class:
 
         # search for paths to each poi in priority order
         while pois:
-            # print('self.path = ' + str(self.path))
             pos = pois.pop(0)
-            # print(pos)
             if self.path and pos == self.path[-1]:
                 # this poi was the previous target and there were no paths to pois of higher priority
                 # check that the previous path is still valid
                 valid = True
                 for step in self.path:
-                    # print(step)
                     if not self.valid(step):
-                        # print(str(step) + ' is invalid since its a "' + self.rep[step]+'"')
                         valid = False
                         break
                 if valid:
-                    # print(self.path)
-                    return # previous path is still valid, just continue with it
+                    # previous path is still valid, just continue with it
+                    return
                 else:
                     # previous path is no longer valid so clear it
                     self.clear_path()
@@ -250,17 +177,13 @@ class env_class:
             if path:
                 self.set_path(path)
                 return # a path has been found so use it
-            # print('path: '+str(self.path))
 
     def explore(self):
         seen = {}
         queue = [(self.x, self.y)]
         while len(queue) > 0:
-            # pop queue
             pos = queue.pop(0)
             a, b = pos
-
-            # need to adjust so works if ? is visible rather than adjacent
             
             # expand n
             x = a
@@ -416,30 +339,15 @@ class env_class:
         start = start or (self.x, self.y)
         env = env or self.rep
 
-        # seen set ensures positions are only checked once, with the shortest prev path
         seen = set([start])
-
-        # minimize stone usage
-        # use a for loop
-        # i.e. search for a path using 0 stones, then using 1 stones, etc. up to actual amount of stones
 
         queue = [(0, start, [])]
         # insert nodes into queue based on mdist + prev cost
-        # first val is est cost to goal, third is list of prior nodes i.e. path ending in pos
-        # first being 0 is dummy since will immediately be popped
-
-        # steps:
-        # take first node from queue
-        # expand nodes from that node
-        # add them to queue based on cost
-        # repeat
+        # first val is est cost to goal, second is pos, third is list of prior nodes i.e. path ending in pos
+        # first val being 0 is dummy since will immediately be popped
 
         while len(queue) > 0:
-            # pop queue
             _ , pos, path = heapq.heappop(queue)
-            # if pos in seen: # maybe? prolly not, since means unnecessary adding and checking of queue
-            #      continue
-            # print(stones_used, pos, path)
 
             if pos == target:
                 return [start] + path
@@ -455,7 +363,7 @@ class env_class:
             x = a
             y = b + 1
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env): # this bit prolly can be a function
-                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
@@ -469,15 +377,14 @@ class env_class:
                         return [start] + path + next_path
                 else:
                     dist = abs(x - c) + abs(y - d) + prev # manhattan distance + cost to get to (x,y) from (a,b)
-                    # insert into priority queue
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
-                seen.add((x,y)) # means that if tried later i.e. by something with higher prior cost, is skipped
+                seen.add((x,y))
 
             # expand e
             x = a + 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
@@ -491,7 +398,6 @@ class env_class:
                         return [start] + path + next_path
                 else:
                     dist = abs(x - c) + abs(y - d) + prev
-                    # insert into priority queue
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
@@ -499,7 +405,7 @@ class env_class:
             x = a
             y = b - 1
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
@@ -513,7 +419,6 @@ class env_class:
                         return [start] + path + next_path
                 else:
                     dist = abs(x - c) + abs(y - d) + prev
-                    # insert into priority queue
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
@@ -521,7 +426,7 @@ class env_class:
             x = a - 1
             y = b
             if (x,y) not in seen and self.valid((x,y), num_stones, optimistic, env):
-                if self.plan_ahead and env[(x,y)] == '~': # note: may mean dont need to store num_stones and maybe stones_used in queue?
+                if self.plan_ahead and env[(x,y)] == '~':
                     next_env = env.copy()
                     next_env[(x,y)] = 'O'
                     next_path = self.pathfind(target, num_stones - 1, False, (x,y), next_env)
@@ -535,7 +440,6 @@ class env_class:
                         return [start] + path + next_path
                 else:
                     dist = abs(x - c) + abs(y - d) + prev
-                    # insert into priority queue
                     heapq.heappush(queue, (dist, (x,y), path + [(x,y)]))
                 seen.add((x,y))
 
@@ -612,8 +516,7 @@ class env_class:
                 for x in range(-2, 3):
                     self.check((x,y))
         elif action == 'f':
-            # add new stuff to env if moved; note, must account for direction as view rotates with agent
-            # need to deal with increasing borders
+            # add new stuff to env if moved
             if direction == 'n':
                 self.y += 1
                 curr = self.rep[(self.x, self.y)]
@@ -708,10 +611,6 @@ class env_class:
             self.doors.discard((x,y))
 
     def show(self):
-        # print(self.border_n)
-        # print(self.border_e)
-        # print(self.border_s)
-        # print(self.border_w)
         line = '+'
         for x in range(self.border_w, self.border_e + 1):
             line += '-'
